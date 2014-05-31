@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm.pojoImpl;
+package com.modelsolv.kaboom.rdm.beanImpl;
 
 import java.net.URI;
 

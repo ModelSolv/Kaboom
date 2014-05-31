@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm.pojoImpl;
+package com.modelsolv.kaboom.rdm.beanImpl;
 
 import com.modelsolv.kaboom.rdm.CanonicalObject;
 import com.modelsolv.kaboom.rdm.RDMReferenceProperty;
