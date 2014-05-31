@@ -6,4 +6,4 @@ A versatile message serializer/deserializer for REST APIs. Kaboom supports multi
 Why the name "Kaboom?"
 Canonical Serializer
 Sounds like "Cannon Cereal"
-Thus, [http://goo.gl/R1WcT8](Kaboom).
+Thus, [Kaboom](http://goo.gl/R1WcT8).
