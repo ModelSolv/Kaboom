@@ -1,4 +1,6 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.object;
+
+import com.modelsolv.kaboom.model.rdm.RDMProperty;
 
 
 public interface CanonicalObject {

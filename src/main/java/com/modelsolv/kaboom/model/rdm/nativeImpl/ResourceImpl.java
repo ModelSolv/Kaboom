@@ -1,10 +1,10 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import java.net.URI;
 
-import com.modelsolv.kaboom.rdm.CanonicalObject;
-import com.modelsolv.kaboom.rdm.Resource;
-import com.modelsolv.kaboom.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.rdm.Resource;
+import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.object.CanonicalObject;
 
 public class ResourceImpl implements Resource {
 

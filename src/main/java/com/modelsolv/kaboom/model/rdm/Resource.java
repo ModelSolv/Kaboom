@@ -1,6 +1,8 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.model.rdm;
 
 import java.net.URI;
+
+import com.modelsolv.kaboom.object.CanonicalObject;
 
 public interface Resource {
 	

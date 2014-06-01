@@ -1,8 +1,8 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
-import com.modelsolv.kaboom.rdm.CanonicalObject;
-import com.modelsolv.kaboom.rdm.ReferenceEmbed;
-import com.modelsolv.kaboom.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
+import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.object.CanonicalObject;
 
 public class ReferenceEmbedImpl implements ReferenceEmbed {
 

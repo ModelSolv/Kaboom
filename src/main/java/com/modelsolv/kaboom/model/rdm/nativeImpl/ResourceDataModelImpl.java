@@ -1,9 +1,9 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import java.util.List;
 
-import com.modelsolv.kaboom.rdm.RDMProperty;
-import com.modelsolv.kaboom.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.rdm.RDMProperty;
+import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 
 public class ResourceDataModelImpl implements ResourceDataModel {
 

@@ -1,11 +1,11 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import java.util.List;
 
-import com.modelsolv.kaboom.rdm.CanonicalObject;
-import com.modelsolv.kaboom.rdm.RDMProperty;
-import com.modelsolv.kaboom.rdm.ReferenceLink;
-import com.modelsolv.kaboom.rdm.Resource;
+import com.modelsolv.kaboom.model.rdm.RDMProperty;
+import com.modelsolv.kaboom.model.rdm.ReferenceLink;
+import com.modelsolv.kaboom.model.rdm.Resource;
+import com.modelsolv.kaboom.object.CanonicalObject;
 
 public class ReferenceLinkImpl implements ReferenceLink {
 

@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.model.rdm;
 
 public interface ReferenceEmbed extends RDMReferenceProperty {
 	

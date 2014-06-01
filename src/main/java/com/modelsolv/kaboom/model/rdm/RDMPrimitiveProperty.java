@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.model.rdm;
 
 public interface RDMPrimitiveProperty extends RDMProperty {
 

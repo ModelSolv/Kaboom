@@ -1,6 +1,6 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
-import com.modelsolv.kaboom.rdm.RDMProperty;
+import com.modelsolv.kaboom.model.rdm.RDMProperty;
 
 public class RDMPropertyImpl implements RDMProperty {
 

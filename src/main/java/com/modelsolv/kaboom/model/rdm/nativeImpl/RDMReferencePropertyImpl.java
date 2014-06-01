@@ -1,7 +1,7 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
-import com.modelsolv.kaboom.rdm.CanonicalObject;
-import com.modelsolv.kaboom.rdm.RDMReferenceProperty;
+import com.modelsolv.kaboom.model.rdm.RDMReferenceProperty;
+import com.modelsolv.kaboom.object.CanonicalObject;
 
 public class RDMReferencePropertyImpl implements RDMReferenceProperty {
 

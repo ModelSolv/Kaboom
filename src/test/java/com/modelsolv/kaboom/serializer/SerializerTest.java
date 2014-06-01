@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.serializer;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.example.Main;
-import com.modelsolv.kaboom.rdm.beanImpl.RDMBeanFactory;
+import com.modelsolv.kaboom.model.rdm.RDMFactory;
+import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.rdm.nativeImpl.NativeRDMFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -39,7 +41,7 @@ public class SerializerTest {
     
     private void buildResourceDataModel() {
     	// TODO inject using Guice?
-    	factory = new RDMBeanFactory();
+    	factory = new NativeRDMFactory();
 
     	// define a data model for a single "Address" entity
     	// TODO introduce CanonicalDataModel, and make the RDM realized from it.
@@ -53,8 +55,9 @@ public class SerializerTest {
     	
     	// create an object of a class compatible with with the Address data model
     	
-    	// use the model to serialize to HAL
+    	
+//    	// use the model to serialize to HAL
 //    	Serializer serializer = new HalSerializer();
-//    	serializer.serializeObject
+//    	serializer.serializeObject = 
     }
 }

@@ -1,14 +1,19 @@
-package com.modelsolv.kaboom.rdm.beanImpl;
+package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
-import com.modelsolv.kaboom.rdm.CanonicalObject;
-import com.modelsolv.kaboom.rdm.RDMFactory;
-import com.modelsolv.kaboom.rdm.RDMPrimitiveProperty;
-import com.modelsolv.kaboom.rdm.ReferenceEmbed;
-import com.modelsolv.kaboom.rdm.ReferenceLink;
-import com.modelsolv.kaboom.rdm.Resource;
-import com.modelsolv.kaboom.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.rdm.RDMFactory;
+import com.modelsolv.kaboom.model.rdm.RDMPrimitiveProperty;
+import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
+import com.modelsolv.kaboom.model.rdm.ReferenceLink;
+import com.modelsolv.kaboom.model.rdm.Resource;
+import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.object.CanonicalObject;
 
-public class RDMBeanFactory implements RDMFactory {
+/**
+ * Factory class to create a resource data model in the native object format.
+ * @author Ted
+ *
+ */
+public class NativeRDMFactory implements RDMFactory {
 
 	@Override
 	public CanonicalObject createCanonicalObject() {

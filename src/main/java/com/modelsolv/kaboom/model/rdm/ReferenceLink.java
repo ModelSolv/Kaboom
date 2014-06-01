@@ -1,4 +1,4 @@
-package com.modelsolv.kaboom.rdm;
+package com.modelsolv.kaboom.model.rdm;
 
 import java.util.List;
 
