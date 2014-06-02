@@ -5,12 +5,12 @@ import java.util.List;
 import com.modelsolv.kaboom.model.rdm.RDMProperty;
 import com.modelsolv.kaboom.model.rdm.ReferenceLink;
 import com.modelsolv.kaboom.model.rdm.Resource;
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public class ReferenceLinkImpl implements ReferenceLink {
 
 	@Override
-	public CanonicalObject getTargetObject() {
+	public CanonicalObjectReader getTargetObject() {
 		// TODO Auto-generated method stub
 		return null;
 	}

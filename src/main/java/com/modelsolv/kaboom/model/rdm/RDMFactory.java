@@ -1,10 +1,10 @@
 package com.modelsolv.kaboom.model.rdm;
 
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public interface RDMFactory {
 	
-	public CanonicalObject createCanonicalObject();
+	public CanonicalObjectReader createCanonicalObject();
 	
 	public RDMPrimitiveProperty createRDMPrimitiveProperty();
 	

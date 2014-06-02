@@ -13,7 +13,7 @@ import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
 import com.modelsolv.kaboom.model.rdm.ReferenceLink;
 import com.modelsolv.kaboom.model.rdm.Resource;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 import com.theoryinpractise.halbuilder.api.Representation;
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
@@ -74,7 +74,7 @@ public class HalResource {
 		// The resource we're going to serialize, probably passed in as a method or ctor param.
 		Resource res = null;
 		// The object bound to this resource.  A POJO wrapped to provide easey property access.
-		CanonicalObject root = res.getBoundObject();
+		CanonicalObjectReader root = res.getBoundObject();
 		// The resource data model, with property exclusions and reference treatments.
 		ResourceDataModel model = res.getDataModel();
 		// The HAL representation we're going to build.
@@ -84,7 +84,7 @@ public class HalResource {
 		return rep.toString();
 	}
 
-	private void buildObjectRepresentation(Representation rep, CanonicalObject obj, ResourceDataModel model) {
+	private void buildObjectRepresentation(Representation rep, CanonicalObjectReader obj, ResourceDataModel model) {
 		List<RDMProperty> props = model.getIncludedProperties();
 		for (RDMProperty prop : props) {
 			if(!(prop instanceof RDMReferenceProperty)) {
@@ -108,13 +108,13 @@ public class HalResource {
 		
 	}
 
-	private void buildLink(Representation rep, CanonicalObject obj,
+	private void buildLink(Representation rep, CanonicalObjectReader obj,
 			ReferenceLink refLink) {
 		// build the outer link structure, to contain the refLink + decorations
 		// TODO: Maybe only do this if there are included properties in the refLink.
 		Representation refLinkRep = representationFactory.newRepresentation();
 		// add included properties, if any
-		CanonicalObject linkedObj = refLink.getTargetObject();
+		CanonicalObjectReader linkedObj = refLink.getTargetObject();
 		for (RDMProperty prop : refLink.getIncludedProperties()) {
 			refLinkRep.withProperty(prop.getName(), linkedObj.getPropertyValue(prop));
 		}

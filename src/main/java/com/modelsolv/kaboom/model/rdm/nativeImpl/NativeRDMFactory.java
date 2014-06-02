@@ -6,7 +6,7 @@ import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
 import com.modelsolv.kaboom.model.rdm.ReferenceLink;
 import com.modelsolv.kaboom.model.rdm.Resource;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 /**
  * Factory class to create a resource data model in the native object format.
@@ -16,7 +16,7 @@ import com.modelsolv.kaboom.object.CanonicalObject;
 public class NativeRDMFactory implements RDMFactory {
 
 	@Override
-	public CanonicalObject createCanonicalObject() {
+	public CanonicalObjectReader createCanonicalObject() {
 		// TODO Auto-generated method stub
 		return null;
 	}

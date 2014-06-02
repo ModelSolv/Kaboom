@@ -1,7 +1,7 @@
 package com.modelsolv.kaboom.object.beanImpl;
 
 import com.modelsolv.kaboom.model.rdm.RDMProperty;
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 /**
  * A wrapper around a Java Bean that exposes the CanonicalObject interface.
@@ -10,16 +10,22 @@ import com.modelsolv.kaboom.object.CanonicalObject;
  * @author Ted
  * 
  */
-public class CanonicalObjectBeanAdapter implements CanonicalObject {
+public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 
 	private Object bean;
 
-	public CanonicalObjectBeanAdapter(Object pojo) {
+	public CanonicalObjectBeanReader(Object pojo) {
 		this.bean = pojo;
 	}
 
 	@Override
 	public Object getPropertyValue(RDMProperty prop) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object getPropertyValue(String propName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

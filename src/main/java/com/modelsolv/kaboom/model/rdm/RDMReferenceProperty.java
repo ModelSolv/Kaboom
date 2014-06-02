@@ -1,9 +1,9 @@
 package com.modelsolv.kaboom.model.rdm;
 
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public interface RDMReferenceProperty extends RDMProperty {
 	
-	public CanonicalObject getTargetObject();
+	public CanonicalObjectReader getTargetObject();
 	
 }

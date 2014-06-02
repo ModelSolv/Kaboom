@@ -2,12 +2,12 @@ package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
-import com.modelsolv.kaboom.object.CanonicalObject;
+import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public class ReferenceEmbedImpl implements ReferenceEmbed {
 
 	@Override
-	public CanonicalObject getTargetObject() {
+	public CanonicalObjectReader getTargetObject() {
 		// TODO Auto-generated method stub
 		return null;
 	}

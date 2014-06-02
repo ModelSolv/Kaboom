@@ -22,5 +22,9 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.ecore_2.9.2.v20131212-0545.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.xsd_2.9.1.v20140203-1126.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.emf.common_2.9.2.v20131212-0545.jar"/>
+	<classpathentry kind="lib" path="lib/com.modelsolv.reprezen.restapi-1.0.0-SNAPSHOT.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

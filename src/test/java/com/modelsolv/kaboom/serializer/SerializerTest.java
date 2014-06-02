@@ -13,6 +13,10 @@ import com.example.Main;
 import com.modelsolv.kaboom.model.rdm.RDMFactory;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.model.rdm.nativeImpl.NativeRDMFactory;
+import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
+import com.modelsolv.reprezen.restapi.RestapiFactory;
+import com.modelsolv.reprezen.restapi.ZenModel;
+import com.modelsolv.reprezen.schemas.taxblasterapi.Address;
 
 import static org.junit.Assert.assertEquals;
 
@@ -24,7 +28,7 @@ public class SerializerTest {
 
     @Before
     public void setUp() throws Exception {
-    	buildResourceDataModel();
+    //	buildResourceDataModel();
     }
 
     @After
@@ -39,6 +43,12 @@ public class SerializerTest {
 
     }
     
+    @Test
+    public void testZenModel() {
+    	RestapiFactory factory = RestapiFactory.eINSTANCE;
+    	ZenModel foo = factory.createZenModel();
+    }
+
     private void buildResourceDataModel() {
     	// TODO inject using Guice?
     	factory = new NativeRDMFactory();
@@ -54,10 +64,18 @@ public class SerializerTest {
     	rdm.getIncludedProperties().add(factory.createRDMPrimitiveProperty("country"));
     	
     	// create an object of a class compatible with with the Address data model
+    	Address address = new Address();
+    	address.setStreet1("42 Donald Drive");
+    	address.setCity("Hastings On Hudson");
+    	address.setStateOrProvince("NY");
+    	address.setPostalCode("10706");
     	
+    	// Adapt it to CanonicalObject for reflective access
+    	CanonicalObjectBeanReader canonicalAddress = new CanonicalObjectBeanReader(address);
     	
-//    	// use the model to serialize to HAL
-//    	Serializer serializer = new HalSerializer();
-//    	serializer.serializeObject = 
+    	// use the model to serialize to HAL
+    	Serializer serializer = new HalSerializerImpl();
+    	String message = serializer.serialize(canonicalAddress, rdm);
     }
+    
 }
