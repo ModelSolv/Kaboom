@@ -16,8 +16,16 @@ import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
 public class HalSerializerImpl extends AbstractSerializerImpl {
 	
 	private RepresentationFactory representationFactory;
+	private String halFormat = RepresentationFactory.HAL_JSON;
 	
 	public HalSerializerImpl() {
+		representationFactory = new StandardRepresentationFactory()
+		.withFlag(RepresentationFactory.PRETTY_PRINT);
+
+	}
+
+	public HalSerializerImpl(String halFormat) {
+		this.halFormat = halFormat;
 		representationFactory = new StandardRepresentationFactory()
 		.withFlag(RepresentationFactory.PRETTY_PRINT);
 
@@ -28,7 +36,7 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		// The HAL representation we're going to build.
 		Representation rep = representationFactory.newRepresentation();
 		buildObjectRepresentation(rep, obj, reader, rdm);
-		return rep.toString();
+		return rep.toString(halFormat);
 	}
 
 	private void buildObjectRepresentation(Representation rep, Object obj, CanonicalObjectReader reader, ResourceDataModel model) {

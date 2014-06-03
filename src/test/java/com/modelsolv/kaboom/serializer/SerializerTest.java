@@ -5,6 +5,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.rdm.RDMFactory;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.model.rdm.nativeImpl.NativeRDMFactory;
@@ -37,7 +41,6 @@ public class SerializerTest {
 	@Test
 	public void testSerializeSingleObject() {
 		buildResourceDataModel();
-		
 
 		// create an object of a class compatible with with the Address data
 		// model
@@ -52,6 +55,22 @@ public class SerializerTest {
 		String message = serializer.serialize(address,
 				new CanonicalObjectBeanReader(), rdm);
 		assertFalse(StringUtils.isEmpty(message));
+		System.out.println(message);
+		JsonNode root = parseJson(message);
+		assertEquals("Hastings On Hudson", root.get("city").asText());
+		assertEquals("10706", root.get("postalCode").asText());
+	}
+
+	private JsonNode parseJson(String json) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			JsonFactory factory = mapper.getFactory();
+			JsonParser jp = factory.createParser(json);
+			return mapper.readTree(jp);
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Failed to parse JSON returned from serializer.", e);
+		}
 	}
 
 	private void buildResourceDataModel() {
