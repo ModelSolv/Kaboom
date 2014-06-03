@@ -11,7 +11,7 @@ public abstract class AbstractSerializerImpl implements Serializer {
 			// The object bound to this resource.  A POJO wrapped to provide easey property access.
 			CanonicalObjectReader obj = res.getBoundObject();
 			// The resource data model, with property exclusions and reference treatments.
-			ResourceDataModel rdm = res.getDataModel();
+			ResourceDataModel rdm = res.getResourceDataModel();
 			return serialize(obj, reader, rdm);
 	}
 

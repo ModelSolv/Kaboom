@@ -10,45 +10,50 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 /**
  * Factory class to create a resource data model in the native object format.
+ * 
  * @author Ted
- *
+ * 
  */
 public class NativeRDMFactory implements RDMFactory {
 
 	@Override
 	public RDMPrimitiveProperty createRDMPrimitiveProperty() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ReferenceLink createReferenceLink() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ReferenceEmbed createReferenceEmbed() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Resource createResource() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResourceDataModel createResourceDataModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return new RDMPrimitivePropertyImpl();
 	}
 
 	@Override
 	public RDMPrimitiveProperty createRDMPrimitiveProperty(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return new RDMPrimitivePropertyImpl(name);
+	}
+
+	@Override
+	public ReferenceLink createReferenceLink() {
+		return new ReferenceLinkImpl();
+	}
+
+	@Override
+	public ReferenceLink createReferenceLink(String name) {
+		return new ReferenceLinkImpl(name);
+	}
+
+	@Override
+	public ReferenceEmbed createReferenceEmbed() {
+		return new ReferenceEmbedImpl();
+	}
+
+	@Override
+	public ReferenceEmbed createReferenceEmbed(String name) {
+		return new ReferenceEmbedImpl(name);
+	}
+
+	@Override
+	public Resource createResource() {
+		return new ResourceImpl();
+	}
+
+	@Override
+	public ResourceDataModel createResourceDataModel() {
+		return new ResourceDataModelImpl();
 	}
 
 }

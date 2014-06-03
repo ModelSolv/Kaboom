@@ -10,8 +10,12 @@ public interface RDMFactory {
 	
 	public ReferenceLink createReferenceLink();
 	
+	public ReferenceLink createReferenceLink(String name);
+
 	public ReferenceEmbed createReferenceEmbed();
 	
+	public ReferenceEmbed createReferenceEmbed(String name);
+
 	public Resource createResource();
 	
 	public ResourceDataModel createResourceDataModel();

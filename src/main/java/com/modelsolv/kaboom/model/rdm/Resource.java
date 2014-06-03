@@ -6,9 +6,9 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public interface Resource {
 	
-	public CanonicalObjectReader getBoundObject();
+	public Object getCanonicalObject();
 
-	public ResourceDataModel getDataModel();
+	public ResourceDataModel getResourceDataModel();
 	
 	public URI getURI();
 }

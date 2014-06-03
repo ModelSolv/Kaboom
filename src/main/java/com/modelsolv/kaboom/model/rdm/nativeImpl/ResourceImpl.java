@@ -7,23 +7,24 @@ import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public class ResourceImpl implements Resource {
+	
+	private Object canonicalObject;
+	private ResourceDataModel rdm;
+	private URI uri;
 
 	@Override
-	public CanonicalObjectReader getBoundObject() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getCanonicalObject() {
+		return canonicalObject;
 	}
 
 	@Override
-	public ResourceDataModel getDataModel() {
-		// TODO Auto-generated method stub
-		return null;
+	public ResourceDataModel getResourceDataModel() {
+		return rdm;
 	}
 
 	@Override
 	public URI getURI() {
-		// TODO Auto-generated method stub
-		return null;
+		return uri;
 	}
 
 }

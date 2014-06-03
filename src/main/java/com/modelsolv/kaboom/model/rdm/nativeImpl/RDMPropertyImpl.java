@@ -2,12 +2,24 @@ package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import com.modelsolv.kaboom.model.rdm.RDMProperty;
 
-public class RDMPropertyImpl implements RDMProperty {
+public abstract class RDMPropertyImpl implements RDMProperty {
+	
+	private String propName;
+	
+	protected RDMPropertyImpl() {};
+	
+	protected RDMPropertyImpl(String propName) {
+		setName(propName);
+	}
+
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return propName;
+	}
+	
+	public void setName(String propName) {
+		this.propName = propName;
 	}
 
 }

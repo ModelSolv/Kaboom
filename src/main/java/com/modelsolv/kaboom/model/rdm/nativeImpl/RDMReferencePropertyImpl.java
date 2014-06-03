@@ -1,20 +1,31 @@
 package com.modelsolv.kaboom.model.rdm.nativeImpl;
 
 import com.modelsolv.kaboom.model.rdm.RDMReferenceProperty;
+import com.modelsolv.kaboom.model.rdm.Resource;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
-public class RDMReferencePropertyImpl implements RDMReferenceProperty {
+public class RDMReferencePropertyImpl extends RDMPropertyImpl implements
+		RDMReferenceProperty {
 
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	private Object targetObject;
+
+	private Resource targetResource;
+
+	public RDMReferencePropertyImpl() {
+		super();
+	}
+
+	public RDMReferencePropertyImpl(String propName) {
+		super(propName);
 	}
 
 	@Override
-	public CanonicalObjectReader getTargetObject() {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getTargetObject() {
+		return targetObject;
+	}
+
+	public Resource getTargetResource() {
+		return targetResource;
 	}
 
 }

@@ -4,24 +4,21 @@ import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
-public class ReferenceEmbedImpl implements ReferenceEmbed {
+public class ReferenceEmbedImpl extends RDMReferencePropertyImpl implements ReferenceEmbed {
 
-	@Override
-	public CanonicalObjectReader getTargetObject() {
-		// TODO Auto-generated method stub
-		return null;
+	private ResourceDataModel targetRDM;
+	
+	public ReferenceEmbedImpl() {
+		super();
 	}
 
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+	public ReferenceEmbedImpl(String propName) {
+		super(propName);
 	}
 
 	@Override
 	public ResourceDataModel getEmbeddedModel() {
-		// TODO Auto-generated method stub
-		return null;
+		return targetRDM;
 	}
 
 }
