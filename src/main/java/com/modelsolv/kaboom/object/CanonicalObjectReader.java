@@ -5,7 +5,7 @@ import com.modelsolv.kaboom.model.rdm.RDMProperty;
 
 public interface CanonicalObjectReader {
 	
-	public Object getPropertyValue(RDMProperty prop);
+	public Object getPropertyValue(Object obj, RDMProperty prop);
 	
-	public Object getPropertyValue(String propName);
+	public Object getPropertyValue(Object obj, String propName);
 }

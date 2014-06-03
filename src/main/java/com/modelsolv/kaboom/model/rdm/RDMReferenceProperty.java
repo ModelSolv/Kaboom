@@ -4,6 +4,6 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public interface RDMReferenceProperty extends RDMProperty {
 	
-	public CanonicalObjectReader getTargetObject();
+	public Object getTargetObject();
 	
 }

@@ -1,5 +1,9 @@
 package com.modelsolv.kaboom.object.beanImpl;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.apache.commons.beanutils.PropertyUtils;
+
 import com.modelsolv.kaboom.model.rdm.RDMProperty;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
@@ -12,22 +16,19 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
  */
 public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 
-	private Object bean;
-
-	public CanonicalObjectBeanReader(Object pojo) {
-		this.bean = pojo;
+	@Override
+	public Object getPropertyValue(Object obj, RDMProperty prop) {
+		return getPropertyValue(obj, prop.getName());
 	}
 
 	@Override
-	public Object getPropertyValue(RDMProperty prop) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object getPropertyValue(Object obj, String propName) {
+		try {
+			return PropertyUtils.getProperty(obj, propName);
+		} catch (Exception e) {
+			throw new RuntimeException("Could not retrieve property value.", e);
+		}
 	}
 
-	@Override
-	public Object getPropertyValue(String propName) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

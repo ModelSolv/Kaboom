@@ -32,6 +32,7 @@ public class HalResource {
 
 	}
 
+	
 	/**
 	 * Method handling HTTP GET requests. The returned object will be sent to
 	 * the client as "text/plain" media type.
@@ -65,62 +66,5 @@ public class HalResource {
 		String json = halResource.toString(RepresentationFactory.HAL_JSON);
 
 		return json;
-	}
-
-	private String buildResourceRepresentation() {
-		RepresentationFactory representationFactory = new StandardRepresentationFactory()
-				.withFlag(RepresentationFactory.PRETTY_PRINT);
-
-		// The resource we're going to serialize, probably passed in as a method or ctor param.
-		Resource res = null;
-		// The object bound to this resource.  A POJO wrapped to provide easey property access.
-		CanonicalObjectReader root = res.getBoundObject();
-		// The resource data model, with property exclusions and reference treatments.
-		ResourceDataModel model = res.getDataModel();
-		// The HAL representation we're going to build.
-		Representation rep = representationFactory.newRepresentation(res
-				.getURI());
-		buildObjectRepresentation(rep, root, model);
-		return rep.toString();
-	}
-
-	private void buildObjectRepresentation(Representation rep, CanonicalObjectReader obj, ResourceDataModel model) {
-		List<RDMProperty> props = model.getIncludedProperties();
-		for (RDMProperty prop : props) {
-			if(!(prop instanceof RDMReferenceProperty)) {
-				// primitive field, just render it.
-				rep.withProperty(prop.getName(), obj.getPropertyValue(prop));
-			} else {
-				// it's a reference, we have to see how to treat it.
-				RDMReferenceProperty refProp = (RDMReferenceProperty) prop;
-				if(refProp instanceof ReferenceLink) {
-					// render a link
-					buildLink(rep, obj, (ReferenceLink) refProp);
-				} else {
-					// render an embedded object
-					ReferenceEmbed refEmbed = (ReferenceEmbed) refProp;
-					Representation embeddedRep = representationFactory.newRepresentation();
-					buildObjectRepresentation(embeddedRep, refEmbed.getTargetObject(), refEmbed.getEmbeddedModel());
-					rep.withRepresentation(refEmbed.getName(), embeddedRep);
-				}
-			}
-		}
-		
-	}
-
-	private void buildLink(Representation rep, CanonicalObjectReader obj,
-			ReferenceLink refLink) {
-		// build the outer link structure, to contain the refLink + decorations
-		// TODO: Maybe only do this if there are included properties in the refLink.
-		Representation refLinkRep = representationFactory.newRepresentation();
-		// add included properties, if any
-		CanonicalObjectReader linkedObj = refLink.getTargetObject();
-		for (RDMProperty prop : refLink.getIncludedProperties()) {
-			refLinkRep.withProperty(prop.getName(), linkedObj.getPropertyValue(prop));
-		}
-		// now add the link
-		refLinkRep.withLink(refLink.getLinkRelation(), refLink.getTargetResource().getURI());
-		// add the link structure to the parent structure.
-		rep.withRepresentation(refLink.getName(), refLinkRep);
 	}
 }

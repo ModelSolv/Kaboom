@@ -16,12 +16,6 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 public class NativeRDMFactory implements RDMFactory {
 
 	@Override
-	public CanonicalObjectReader createCanonicalObject() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public RDMPrimitiveProperty createRDMPrimitiveProperty() {
 		// TODO Auto-generated method stub
 		return null;

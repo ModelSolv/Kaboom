@@ -4,8 +4,6 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public interface RDMFactory {
 	
-	public CanonicalObjectReader createCanonicalObject();
-	
 	public RDMPrimitiveProperty createRDMPrimitiveProperty();
 	
 	public RDMPrimitiveProperty createRDMPrimitiveProperty(String name);
