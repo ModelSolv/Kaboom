@@ -24,19 +24,19 @@ public interface ResourceDataModel {
 	public RDMPrimitiveProperty addPrimitiveProperty(
 			CDMPrimitiveProperty property);
 
-	// Add Primitive Property directly
-	public RDMPrimitiveProperty withPrimitiveProperty(
+	// Add Primitive Property directly, chainable, builder style
+	public ResourceDataModel withPrimitiveProperty(
 			RDMPrimitiveProperty property);
 
 	// Add ReferenceLink from CDMReferenceProperty
-	public ReferenceLink withReferenceLink(CDMReferenceProperty property);
+	public ReferenceLink addReferenceLink(CDMReferenceProperty property);
 
-	// Add ReferenceLink Directly
-	public ReferenceLink withReferenceLink(ReferenceLink refLink);
+	// Add ReferenceLink Directly, chainable, builder style
+	public ResourceDataModel withReferenceLink(ReferenceLink refLink);
 
 	// Add ReferenceEmbed from CDMReferenceProperty
-	public ReferenceEmbed withReferenceEmbed(CDMReferenceProperty property);
+	public ReferenceEmbed addReferenceEmbed(CDMReferenceProperty property);
 
-	// Add ReferenceEmbed Directly
-	public ReferenceEmbed withReferenceEmbed(ReferenceEmbed refEmbed);
+	// Add ReferenceEmbed Directly, chainable, builder style
+	public ResourceDataModel withReferenceEmbed(ReferenceEmbed refEmbed);
 }
