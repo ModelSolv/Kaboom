@@ -6,7 +6,7 @@ import com.modelsolv.kaboom.model.rdm.RDMProperty;
 import com.modelsolv.kaboom.model.rdm.RDMReferenceProperty;
 import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
 import com.modelsolv.kaboom.model.rdm.ReferenceLink;
-import com.modelsolv.kaboom.model.rdm.Resource;
+import com.modelsolv.kaboom.model.rdm.ObjectResource;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 import com.theoryinpractise.halbuilder.api.Representation;

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.rdm.RDMFactory;
+import com.modelsolv.kaboom.model.rdm.ReferenceLink;
 import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
 import com.modelsolv.kaboom.model.rdm.nativeImpl.NativeRDMFactory;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
@@ -23,7 +24,8 @@ import static org.junit.Assert.assertTrue;
 
 public class SerializerTest {
 
-	private ResourceDataModel rdm;
+	private ResourceDataModel addressRDM;
+	private ResourceDataModel customerRDM;
 	private RDMFactory factory;
 
 	@Before
@@ -36,24 +38,36 @@ public class SerializerTest {
 	}
 
 	/**
-	 * Test to see that the message "Got it!" is sent in the response.
+	 * Serialize a single object to a HAL JSON, and make sure it serialized correctly.
 	 */
 	@Test
 	public void testSerializeSingleObject() {
 		buildResourceDataModel();
-
-		// create an object of a class compatible with with the Address data
-		// model
-		Address address = new Address();
-		address.setStreet1("42 Donald Drive");
-		address.setCity("Hastings On Hudson");
-		address.setStateOrProvince("NY");
-		address.setPostalCode("10706");
+		Address address = buildSimpleAddress();
 
 		// use the model to serialize to HAL
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(address,
-				new CanonicalObjectBeanReader(), rdm);
+				new CanonicalObjectBeanReader(), addressRDM);
+		assertFalse(StringUtils.isEmpty(message));
+		System.out.println(message);
+		JsonNode root = parseJson(message);
+		assertEquals("Hastings On Hudson", root.get("city").asText());
+		assertEquals("10706", root.get("postalCode").asText());
+	}
+
+	/**
+	 * Serialize a minimal object graph to a HAL JSON, and make sure it serialized correctly.
+	 */
+	@Test
+	public void testSerializeLinkedObject() {
+		buildResourceDataModel();
+		Address address = buildSimpleAddress();
+
+		// use the model to serialize to HAL
+		Serializer serializer = new HalSerializerImpl();
+		String message = serializer.serialize(address,
+				new CanonicalObjectBeanReader(), addressRDM);
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
@@ -76,22 +90,53 @@ public class SerializerTest {
 	private void buildResourceDataModel() {
 		// TODO inject using Guice?
 		factory = new NativeRDMFactory();
-		rdm = factory.createResourceDataModel();
 
 		// define a data model for a single "Address" entity
 		// TODO introduce CanonicalDataModel, and make the RDM realized from it.
-		rdm.getIncludedProperties().add(
+		addressRDM = factory.createResourceDataModel();
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("street1"));
-		rdm.getIncludedProperties().add(
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("street2"));
-		rdm.getIncludedProperties().add(
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("city"));
-		rdm.getIncludedProperties().add(
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("stateOrProvince"));
-		rdm.getIncludedProperties().add(
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("postalCode"));
-		rdm.getIncludedProperties().add(
+		addressRDM.getIncludedProperties().add(
 				factory.createRDMPrimitiveProperty("country"));
+		
+		// data model for a customer, with a reference to Address
+		customerRDM = factory.createResourceDataModel();
+		customerRDM.getIncludedProperties().add(
+				factory.createRDMPrimitiveProperty("customerID"));
+		customerRDM.getIncludedProperties().add(
+				factory.createRDMPrimitiveProperty("firstName"));
+		customerRDM.getIncludedProperties().add(
+				factory.createRDMPrimitiveProperty("lastName"));
+		customerRDM.getIncludedProperties().add(
+				factory.createRDMPrimitiveProperty("companyName"));
+//		// Link to Address
+//		ReferenceLink addressLink = factory.createReferenceLink("address");
+//		addressLink.
+//		customerRDM.getIncludedProperties().add(
+//				);
+		
+	}
+
+	/**
+	 * create an object of a class compatible with with the Address data model
+	 * 
+	 * @return
+	 */
+	private Address buildSimpleAddress() {
+		Address address = new Address();
+		address.setStreet1("42 Donald Drive");
+		address.setCity("Hastings On Hudson");
+		address.setStateOrProvince("NY");
+		address.setPostalCode("10706");
+		return address;
 	}
 
 }

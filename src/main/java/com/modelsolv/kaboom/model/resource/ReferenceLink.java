@@ -1,6 +1,8 @@
-package com.modelsolv.kaboom.model.rdm;
+package com.modelsolv.kaboom.model.resource;
 
 import java.util.List;
+
+import com.modelsolv.kaboom.model.canonical.CDMProperty;
 
 public interface ReferenceLink extends RDMReferenceProperty {
 
@@ -17,13 +19,21 @@ public interface ReferenceLink extends RDMReferenceProperty {
 	 * 
 	 * @return
 	 */
-	public List<RDMProperty> getIncludedProperties();
+	public Iterable<RDMProperty> getIncludedProperties();
+
+	public ReferenceLink includingProperties(CDMProperty... properties);
+	
+	public ReferenceLink includingProperties(String... properties);
 
 	/**
 	 * 
 	 * @return the Link Relation if specified, otherwise null
 	 */
 	public String getLinkRelation();
+	
+	public void setLinkRelation(String linkRelation);
+	
+	public ReferenceLink withLinkRelation(String linkRelation);
 
 	/**
 	 * The target resource of the link. Will be the default resource for the
@@ -32,5 +42,10 @@ public interface ReferenceLink extends RDMReferenceProperty {
 	 * 
 	 * @return
 	 */
-	public Resource getTargetResource();
+	public ObjectResourceDefinition getTargetResourceDefinition();
+	
+	public void setTargetResourceDefinition(ObjectResourceDefinition resourceDef);
+	
+	public ReferenceLink withTargetResourceDefinition(ObjectResourceDefinition resourceDef);
+	
 }
