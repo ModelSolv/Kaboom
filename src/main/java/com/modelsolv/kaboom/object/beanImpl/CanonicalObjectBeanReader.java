@@ -4,7 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.modelsolv.kaboom.model.rdm.RDMProperty;
+import com.modelsolv.kaboom.model.resource.RDMProperty;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 /**
@@ -29,6 +29,5 @@ public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 			throw new RuntimeException("Could not retrieve property value.", e);
 		}
 	}
-
 
 }

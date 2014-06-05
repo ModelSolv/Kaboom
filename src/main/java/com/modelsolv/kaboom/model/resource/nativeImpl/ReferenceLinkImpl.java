@@ -1,6 +1,7 @@
 package com.modelsolv.kaboom.model.resource.nativeImpl;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import com.modelsolv.kaboom.model.canonical.CDMProperty;
@@ -14,7 +15,7 @@ import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements ReferenceLink {
 	
-	private List<RDMProperty> includedProperties;
+	private LinkedHashMap<String, RDMProperty> includedProperties;
 	
 	private String linkRelation;
 	
@@ -27,9 +28,9 @@ public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements Refer
 	@Override
 	public Iterable<RDMProperty> getIncludedProperties() {
 		if (includedProperties == null) {
-			includedProperties = new ArrayList<RDMProperty>();
+			includedProperties = new LinkedHashMap<String, RDMProperty>();
 		}
-		return includedProperties;
+		return includedProperties.values();
 	}
 
 	@Override

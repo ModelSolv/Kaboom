@@ -2,12 +2,15 @@ package com.modelsolv.kaboom.serializer;
 
 import java.util.List;
 
-import com.modelsolv.kaboom.model.rdm.RDMProperty;
-import com.modelsolv.kaboom.model.rdm.RDMReferenceProperty;
-import com.modelsolv.kaboom.model.rdm.ReferenceEmbed;
-import com.modelsolv.kaboom.model.rdm.ReferenceLink;
-import com.modelsolv.kaboom.model.rdm.ObjectResource;
-import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
+import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import com.modelsolv.kaboom.model.resource.ObjectResource;
+import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
+import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
+import com.modelsolv.kaboom.model.resource.RDMProperty;
+import com.modelsolv.kaboom.model.resource.RDMReferenceProperty;
+import com.modelsolv.kaboom.model.resource.ReferenceEmbed;
+import com.modelsolv.kaboom.model.resource.ReferenceLink;
+import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 import com.theoryinpractise.halbuilder.api.Representation;
 import com.theoryinpractise.halbuilder.api.RepresentationFactory;
@@ -40,7 +43,7 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 	}
 
 	private void buildObjectRepresentation(Representation rep, Object obj, CanonicalObjectReader reader, ResourceDataModel model) {
-		List<RDMProperty> props = model.getIncludedProperties();
+		Iterable<RDMProperty> props = model.getIncludedProperties();
 		for (RDMProperty prop : props) {
 			if(!(prop instanceof RDMReferenceProperty)) {
 				// primitive field, just render it.
@@ -49,12 +52,13 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 				// it's a reference, we have to see how to treat it.
 				if(prop instanceof ReferenceLink) {
 					// render a link
-					buildLink(rep, reader, (ReferenceLink) prop);
+					buildLink(rep, obj, reader, (ReferenceLink) prop);
 				} else {
 					// render an embedded object
 					ReferenceEmbed refEmbed = (ReferenceEmbed) prop;
 					Representation embeddedRep = representationFactory.newRepresentation();
-					buildObjectRepresentation(embeddedRep, refEmbed.getTargetObject(), reader, refEmbed.getEmbeddedModel());
+					Object targetObject = reader.getPropertyValue(obj, refEmbed);
+					buildObjectRepresentation(embeddedRep, targetObject, reader, refEmbed.getEmbeddedModel());
 					rep.withRepresentation(refEmbed.getName(), embeddedRep);
 				}
 			}
@@ -62,21 +66,23 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		
 	}
 
-	private void buildLink(Representation rep, CanonicalObjectReader reader,
+	private void buildLink(Representation rep, Object obj, CanonicalObjectReader reader,
 			ReferenceLink refLink) {
 		// build the outer link structure, to contain the refLink + decorations
 		// TODO: Maybe only do this if there are included properties in the refLink.
 		Representation refLinkRep = representationFactory.newRepresentation();
 		// add included properties, if any
-		Object linkedObj = refLink.getTargetObject();
+		Object targetObj = reader.getPropertyValue(obj, refLink);
 		for (RDMProperty prop : refLink.getIncludedProperties()) {
-			refLinkRep.withProperty(prop.getName(), reader.getPropertyValue(linkedObj, prop));
+			refLinkRep.withProperty(prop.getName(), reader.getPropertyValue(targetObj, prop));
 		}
 		// now add the link
-		refLinkRep.withLink(refLink.getLinkRelation(), refLink.getTargetResource().getURI());
+		CanonicalDataType cdt = refLink.getCDMProperty().getTargetDataType();
+		ObjectResourceDefinition ord = ObjectResourceDefinitionRegistry.INSTANCE.getResourceDefinition(cdt);
+		ObjectResource targetResource = ord.getResource(targetObj);
+		refLinkRep.withLink(refLink.getLinkRelation(), targetResource.getURI());
 		// add the link structure to the parent structure.
 		rep.withRepresentation(refLink.getName(), refLinkRep);
 	}
-	
 
 }

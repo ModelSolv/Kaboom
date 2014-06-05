@@ -3,7 +3,6 @@ package com.modelsolv.kaboom.model.resource.nativeImpl;
 import com.modelsolv.kaboom.model.canonical.CDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
-import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.RDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.resource.ReferenceEmbed;

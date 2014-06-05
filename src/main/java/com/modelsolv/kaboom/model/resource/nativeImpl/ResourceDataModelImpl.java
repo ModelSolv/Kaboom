@@ -100,7 +100,8 @@ public class ResourceDataModelImpl implements ResourceDataModel {
 		}
 	}
 
-	private RDMProperty addCDMProperty(CDMProperty property, WrapStrategy wrapper) {
+	private RDMProperty addCDMProperty(CDMProperty property,
+			WrapStrategy wrapper) {
 		RDMProperty rdmProp = wrapper.wrapCDMProperty(property);
 		addRDMProperty(rdmProp);
 		return rdmProp;
@@ -122,81 +123,44 @@ public class ResourceDataModelImpl implements ResourceDataModel {
 	}
 
 	@Override
-	public RDMPrimitiveProperty withPrimitiveProperty(CDMPrimitiveProperty property) {
-		return (RDMPrimitiveProperty) addCDMProperty(property, new WrapStrategy() {
-			@Override
-			public RDMProperty wrapCDMProperty(CDMProperty cdmProperty) {
-				return new RDMPrimitivePropertyImpl(
-						(CDMPrimitiveProperty) cdmProperty);
-			}
-
-		});
+	public RDMPrimitiveProperty addPrimitiveProperty(
+			CDMPrimitiveProperty property) {
+		RDMPrimitiveProperty rdmProp = new RDMPrimitivePropertyImpl(property);
+		addRDMProperty(rdmProp);
+		return rdmProp;
 	}
 
 	@Override
-	public RDMPrimitiveProperty withPrimitiveProperty(
-			RDMPrimitiveProperty property) {
+	public ResourceDataModel withPrimitiveProperty(RDMPrimitiveProperty property) {
 		addRDMProperty(property);
-		return property;
+		return this;
 	}
 
 	@Override
-	public void addReferenceLink(CDMReferenceProperty property) {
-		addCDMProperty(property, new WrapStrategy() {
-			@Override
-			public RDMProperty wrapCDMProperty(CDMProperty cdmProperty) {
-				return new ReferenceLinkImpl((CDMReferenceProperty) cdmProperty);
-			}
-
-		});
+	public ReferenceLink addReferenceLink(CDMReferenceProperty property) {
+		ReferenceLink refLink = new ReferenceLinkImpl(property);
+		addRDMProperty(refLink);
+		return refLink;
 	}
 
 	@Override
-	public ReferenceLink withReferenceLink(CDMReferenceProperty property) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResourceDataModel withReferenceLink(ReferenceLink reflink) {
+		addRDMProperty(reflink);
+		return this;
 	}
 
 	@Override
-	public void addReferenceLink(ReferenceLink refLink) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ReferenceLink withReferenceLink(ReferenceLink refLink) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addReferenceEmbed(CDMReferenceProperty property) {
-		addCDMProperty(property, new WrapStrategy() {
-			@Override
-			public RDMProperty wrapCDMProperty(CDMProperty cdmProperty) {
-				return new ReferenceEmbedImpl(
-						(CDMReferenceProperty) cdmProperty);
-			}
-
-		});
-	}
-
-	@Override
-	public ReferenceEmbed withReferenceEmbed(CDMReferenceProperty property) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void addReferenceEmbed(ReferenceEmbed refEmbed) {
-		// TODO Auto-generated method stub
+	public ReferenceEmbed addReferenceEmbed(CDMReferenceProperty property) {
+		ReferenceEmbed refEmbed = new ReferenceEmbedImpl(property);
+		addRDMProperty(refEmbed);
+		return refEmbed;
 
 	}
 
 	@Override
-	public ReferenceEmbed withReferenceEmbed(ReferenceEmbed refEmbed) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResourceDataModel withReferenceEmbed(ReferenceEmbed refEmbed) {
+		addRDMProperty(refEmbed);
+		return this;
 	}
 
 	/**

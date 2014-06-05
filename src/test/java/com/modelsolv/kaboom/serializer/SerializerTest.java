@@ -9,12 +9,10 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.modelsolv.kaboom.model.rdm.RDMFactory;
-import com.modelsolv.kaboom.model.rdm.ReferenceLink;
-import com.modelsolv.kaboom.model.rdm.ResourceDataModel;
-import com.modelsolv.kaboom.model.rdm.nativeImpl.NativeRDMFactory;
+import com.modelsolv.kaboom.model.resource.RDMFactory;
+import com.modelsolv.kaboom.model.resource.ResourceDataModel;
+import com.modelsolv.kaboom.model.resource.nativeImpl.NativeRDMFactory;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
-import com.modelsolv.reprezen.restapi.RestapiFactory;
 import com.modelsolv.reprezen.restapi.ZenModel;
 import com.modelsolv.reprezen.schemas.taxblasterapi.Address;
 
@@ -93,30 +91,32 @@ public class SerializerTest {
 
 		// define a data model for a single "Address" entity
 		// TODO introduce CanonicalDataModel, and make the RDM realized from it.
-		addressRDM = factory.createResourceDataModel();
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("street1"));
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("street2"));
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("city"));
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("stateOrProvince"));
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("postalCode"));
-		addressRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("country"));
+//		addressRDM = factory.createResourceDataModel();
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("street1"));
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("street2"));
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("city"));
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("stateOrProvince"));
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("postalCode"));
+//		addressRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("country"));
+//		
+//		// data model for a customer, with a reference to Address
+//		customerRDM = factory.createResourceDataModel();
+//		customerRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("customerID"));
+//		customerRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("firstName"));
+//		customerRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("lastName"));
+//		customerRDM.getIncludedProperties().add(
+//				factory.createRDMPrimitiveProperty("companyName"));
 		
-		// data model for a customer, with a reference to Address
-		customerRDM = factory.createResourceDataModel();
-		customerRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("customerID"));
-		customerRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("firstName"));
-		customerRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("lastName"));
-		customerRDM.getIncludedProperties().add(
-				factory.createRDMPrimitiveProperty("companyName"));
+		
 //		// Link to Address
 //		ReferenceLink addressLink = factory.createReferenceLink("address");
 //		addressLink.

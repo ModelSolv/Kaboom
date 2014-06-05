@@ -1,7 +1,6 @@
 package com.modelsolv.kaboom.object;
 
-import com.modelsolv.kaboom.model.rdm.RDMProperty;
-
+import com.modelsolv.kaboom.model.resource.RDMProperty;
 
 public interface CanonicalObjectReader {
 	

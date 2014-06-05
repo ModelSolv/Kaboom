@@ -43,8 +43,7 @@ public class CanonicalDataTypeImpl implements CanonicalDataType {
 
 	@Override
 	public boolean hasProperty(CDMProperty property) {
-		// TODO Auto-generated method stub
-		return false;
+		return properties.containsKey(property);
 	}
 
 	@Override
