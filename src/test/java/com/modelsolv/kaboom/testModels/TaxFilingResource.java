@@ -1,5 +1,5 @@
 
-package com.modelsolv.reprezen.schemas.taxblasterapi;
+package com.modelsolv.kaboom.testModels;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.w3._2005.atom.LinkType;
 
 
 /**
@@ -68,8 +67,6 @@ import org.w3._2005.atom.LinkType;
 })
 public class TaxFilingResource {
 
-    @XmlElement(required = true)
-    protected TaxFilingResource.Taxpayer taxpayer;
     @XmlAttribute(name = "filingID", required = true)
     protected String filingID;
     @XmlAttribute(name = "jurisdiction", required = true)
@@ -85,30 +82,6 @@ public class TaxFilingResource {
     protected BigDecimal grossIncome;
     @XmlAttribute(name = "taxLiability", required = true)
     protected BigDecimal taxLiability;
-
-    /**
-     * Gets the value of the taxpayer property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TaxFilingResource.Taxpayer }
-     *     
-     */
-    public TaxFilingResource.Taxpayer getTaxpayer() {
-        return taxpayer;
-    }
-
-    /**
-     * Sets the value of the taxpayer property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TaxFilingResource.Taxpayer }
-     *     
-     */
-    public void setTaxpayer(TaxFilingResource.Taxpayer value) {
-        this.taxpayer = value;
-    }
 
     /**
      * Gets the value of the filingID property.
@@ -302,152 +275,5 @@ public class TaxFilingResource {
      * 
      * 
      */
-    @XmlAccessorType(XmlAccessType.FIELD)
-    @XmlType(name = "", propOrder = {
-        "link",
-        "lastNameList"
-    })
-    public static class Taxpayer {
-
-        @XmlElement(namespace = "http://www.w3.org/2005/Atom", required = true)
-        protected LinkType link;
-        @XmlElement(required = true)
-        protected TaxFilingResource.Taxpayer.LastNameList lastNameList;
-        @XmlAttribute(name = "firstName", required = true)
-        protected String firstName;
-
-        /**
-         * Gets the value of the link property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link LinkType }
-         *     
-         */
-        public LinkType getLink() {
-            return link;
-        }
-
-        /**
-         * Sets the value of the link property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link LinkType }
-         *     
-         */
-        public void setLink(LinkType value) {
-            this.link = value;
-        }
-
-        /**
-         * Gets the value of the lastNameList property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link TaxFilingResource.Taxpayer.LastNameList }
-         *     
-         */
-        public TaxFilingResource.Taxpayer.LastNameList getLastNameList() {
-            return lastNameList;
-        }
-
-        /**
-         * Sets the value of the lastNameList property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link TaxFilingResource.Taxpayer.LastNameList }
-         *     
-         */
-        public void setLastNameList(TaxFilingResource.Taxpayer.LastNameList value) {
-            this.lastNameList = value;
-        }
-
-        /**
-         * Gets the value of the firstName property.
-         * 
-         * @return
-         *     possible object is
-         *     {@link String }
-         *     
-         */
-        public String getFirstName() {
-            return firstName;
-        }
-
-        /**
-         * Sets the value of the firstName property.
-         * 
-         * @param value
-         *     allowed object is
-         *     {@link String }
-         *     
-         */
-        public void setFirstName(String value) {
-            this.firstName = value;
-        }
-
-
-        /**
-         * <p>Java class for anonymous complex type.
-         * 
-         * <p>The following schema fragment specifies the expected content contained within this class.
-         * 
-         * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence>
-         *         &lt;element name="item" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
-         * </pre>
-         * 
-         * 
-         */
-        @XmlAccessorType(XmlAccessType.FIELD)
-        @XmlType(name = "", propOrder = {
-            "item"
-        })
-        public static class LastNameList {
-
-            @XmlElement(required = true)
-            protected List<String> item;
-
-            /**
-             * Gets the value of the item property.
-             * 
-             * <p>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the item property.
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getItem().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link String }
-             * 
-             * 
-             */
-            public List<String> getItem() {
-                if (item == null) {
-                    item = new ArrayList<String>();
-                }
-                return this.item;
-            }
-
-        }
-
-    }
 
 }

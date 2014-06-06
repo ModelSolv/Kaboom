@@ -1,5 +1,5 @@
 
-package com.modelsolv.reprezen.schemas.taxblasterapi;
+package com.modelsolv.kaboom.testModels;
 
 import java.util.ArrayList;
 import java.util.List;

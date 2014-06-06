@@ -1,5 +1,5 @@
 
-package com.modelsolv.reprezen.schemas.taxblasterapi;
+package com.modelsolv.kaboom.testModels;
 
 import java.math.BigDecimal;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -11,12 +11,12 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java class for TaxFiling complex type.
+ * <p>Java class for TaxFilingsResource complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="TaxFiling">
+ * &lt;complexType name="TaxFilingsResource">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -36,8 +36,8 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TaxFiling")
-public class TaxFiling {
+@XmlType(name = "TaxFilingsResource")
+public class TaxFilingsResource {
 
     @XmlAttribute(name = "filingID", required = true)
     protected String filingID;

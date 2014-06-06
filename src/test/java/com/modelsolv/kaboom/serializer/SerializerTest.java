@@ -14,15 +14,17 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.BOOLEAN;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DATE;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.FLOAT;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
+
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
-import com.modelsolv.reprezen.schemas.taxblasterapi.Address;
+import com.modelsolv.kaboom.testModels.Address;
 
 public class SerializerTest {
 
@@ -100,32 +102,21 @@ public class SerializerTest {
 		// Define canonical model
 		CanonicalDataType address = cdmFactory.createDataType("Address")
 				.withPrimitive("street1", STRING)
-				.withPrimitive("street2", STRING)
-				.withPrimitive("city", STRING)
+				.withPrimitive("street2", STRING).withPrimitive("city", STRING)
 				.withPrimitive("stateOrProvince", STRING)
 				.withPrimitive("postalCode", STRING)
 				.withPrimitive("country", STRING);
 
+		CanonicalDataType customer = cdmFactory.createDataType("Customer")
+				.withPrimitive("customerID", STRING)
+				.withPrimitive("firstName", STRING)
+				.withPrimitive("lastName", STRING)
+				.withPrimitive("companyName", STRING)
+				.withReference("address", address);
+		
 		// define a data model for a single "Address" entity
 		addressRDM = rdmFactory.createResourceDataModel(address);
-
-		// data model for a customer, with a reference to Address
-//		customerRDM = rdmFactory.createResourceDataModel();
-//		customerRDM.getIncludedProperties().add(
-//				rdmFactory.createRDMPrimitiveProperty("customerID"));
-//		customerRDM.getIncludedProperties().add(
-//				rdmFactory.createRDMPrimitiveProperty("firstName"));
-//		customerRDM.getIncludedProperties().add(
-//				rdmFactory.createRDMPrimitiveProperty("lastName"));
-//		customerRDM.getIncludedProperties().add(
-//				rdmFactory.createRDMPrimitiveProperty("companyName"));
-
-		// // Link to Address
-		// ReferenceLink addressLink = factory.createReferenceLink("address");
-		// addressLink.
-		// customerRDM.getIncludedProperties().add(
-		// );
-
+		customerRDM = rdmFactory.createResourceDataModel(customer);
 	}
 
 	/**
@@ -141,5 +132,4 @@ public class SerializerTest {
 		address.setPostalCode("10706");
 		return address;
 	}
-
 }

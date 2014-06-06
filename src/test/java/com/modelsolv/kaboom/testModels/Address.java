@@ -1,5 +1,5 @@
 
-package com.modelsolv.reprezen.schemas.taxblasterapi;
+package com.modelsolv.kaboom.testModels;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
