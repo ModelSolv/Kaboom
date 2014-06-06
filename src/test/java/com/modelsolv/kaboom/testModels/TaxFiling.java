@@ -41,7 +41,8 @@ public class TaxFiling {
 
     @XmlAttribute(name = "filingID", required = true)
     protected String filingID;
-    @XmlAttribute(name = "jurisdiction", required = true)
+    protected Person taxpayer;
+	@XmlAttribute(name = "jurisdiction", required = true)
     protected String jurisdiction;
     @XmlAttribute(name = "year", required = true)
     @XmlSchemaType(name = "gYear")
@@ -78,6 +79,14 @@ public class TaxFiling {
     public void setFilingID(String value) {
         this.filingID = value;
     }
+
+    public Person getTaxpayer() {
+		return taxpayer;
+	}
+
+	public void setTaxpayer(Person taxpayer) {
+		this.taxpayer = taxpayer;
+	}
 
     /**
      * Gets the value of the jurisdiction property.

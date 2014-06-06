@@ -1,7 +1,16 @@
 package com.modelsolv.kaboom.serializer;
 
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DATE;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DECIMAL;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
+import java.math.BigDecimal;
+
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -14,22 +23,19 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
-
-import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
-import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.BOOLEAN;
-import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DATE;
-import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.FLOAT;
-import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
-
+import com.modelsolv.kaboom.model.canonical.Cardinality;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
 import com.modelsolv.kaboom.testModels.Address;
+import com.modelsolv.kaboom.testModels.Person;
+import com.modelsolv.kaboom.testModels.TaxFiling;
 
 public class SerializerTest {
 
 	private ResourceDataModel addressRDM;
-	private ResourceDataModel customerRDM;
+	private ResourceDataModel personRDM;
+	private ResourceDataModel taxFilingRDM;
 	private CDMFactory cdmFactory;
 	private RDMFactory rdmFactory;
 
@@ -69,12 +75,12 @@ public class SerializerTest {
 	@Test
 	public void testSerializeLinkedObject() {
 		buildResourceDataModel();
-		Address address = buildSimpleAddress();
+		TaxFiling filing = buildTaxFiling();
 
 		// use the model to serialize to HAL
 		Serializer serializer = new HalSerializerImpl();
-		String message = serializer.serialize(address,
-				new CanonicalObjectBeanReader(), addressRDM);
+		String message = serializer.serialize(filing,
+				new CanonicalObjectBeanReader(), taxFilingRDM);
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
@@ -100,23 +106,35 @@ public class SerializerTest {
 		rdmFactory = RDMFactory.INSTANCE;
 
 		// Define canonical model
-		CanonicalDataType address = cdmFactory.createDataType("Address")
+		CanonicalDataType addressType = cdmFactory.createDataType("Address")
 				.withPrimitive("street1", STRING)
 				.withPrimitive("street2", STRING).withPrimitive("city", STRING)
 				.withPrimitive("stateOrProvince", STRING)
 				.withPrimitive("postalCode", STRING)
 				.withPrimitive("country", STRING);
 
-		CanonicalDataType customer = cdmFactory.createDataType("Customer")
-				.withPrimitive("customerID", STRING)
+		CanonicalDataType personType = cdmFactory.createDataType("Person")
+				.withPrimitive("taxpayerID", STRING)
 				.withPrimitive("firstName", STRING)
-				.withPrimitive("lastName", STRING)
-				.withPrimitive("companyName", STRING)
-				.withReference("address", address);
-		
+				.withPrimitive("lastName", STRING);
+		// multi-valued fields don't work yet.
+		/*
+		 * .withReference("addresses", addressType, Cardinality.ZERO_OR_MORE);
+		 */
+
+		CanonicalDataType taxFilingType = cdmFactory
+				.createDataType("TaxFiling").withPrimitive("filingID", STRING)
+				.withReference("taxpayer", personType)
+				.withPrimitive("jurisdiction", STRING)
+				.withPrimitive("year", DATE).withPrimitive("period", INTEGER)
+				.withPrimitive("currency", STRING)
+				.withPrimitive("grossIncome", DECIMAL)
+				.withPrimitive("taxLiability", DECIMAL);
+
 		// define a data model for a single "Address" entity
-		addressRDM = rdmFactory.createResourceDataModel(address);
-		customerRDM = rdmFactory.createResourceDataModel(customer);
+		addressRDM = rdmFactory.createResourceDataModel(addressType);
+		personRDM = rdmFactory.createResourceDataModel(personType);
+		taxFilingRDM = rdmFactory.createResourceDataModel(taxFilingType);
 	}
 
 	/**
@@ -131,5 +149,37 @@ public class SerializerTest {
 		address.setStateOrProvince("NY");
 		address.setPostalCode("10706");
 		return address;
+	}
+
+	private TaxFiling buildTaxFiling() {
+		TaxFiling filing = new TaxFiling();
+		filing.setCurrency("USD");
+		filing.setFilingID("1324");
+		filing.setGrossIncome(BigDecimal.valueOf(115000));
+		filing.setJurisdiction("IRS");
+		filing.setPeriod(0);
+		filing.setTaxLiability(BigDecimal.valueOf(18500));
+		filing.setTaxpayer(buildPerson());
+		filing.setYear(getXmlDate());
+		return filing;
+	}
+
+	private Person buildPerson() {
+		Person p = new Person();
+		p.setFirstName("Paul");
+		p.setLastName("McDermott");
+		p.getAddresses().add(buildSimpleAddress());
+		return p;
+	}
+
+	private XMLGregorianCalendar getXmlDate() {
+		try {
+			XMLGregorianCalendar date = DatatypeFactory.newInstance()
+					.newXMLGregorianCalendarDate(2013, 12, 31, -6);
+			return date;
+		} catch (Exception e) {
+			throw new RuntimeException("Could not build XMLGregorianCalendar.",
+					e);
+		}
 	}
 }

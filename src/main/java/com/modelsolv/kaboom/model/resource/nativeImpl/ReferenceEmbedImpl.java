@@ -16,7 +16,7 @@ public class ReferenceEmbedImpl extends RDMReferencePropertyImpl implements
 	@Override
 	public ResourceDataModel getEmbeddedModel() {
 		if (targetRDM == null) {
-			return new ResourceDataModelImpl();
+			return new ResourceDataModelImpl(this.getTargetDataType());
 		}
 		return targetRDM;
 	}
