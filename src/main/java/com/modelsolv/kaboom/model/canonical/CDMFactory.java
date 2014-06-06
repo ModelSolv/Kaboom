@@ -1,6 +1,10 @@
 package com.modelsolv.kaboom.model.canonical;
 
-public interface CanonicalDataModelFactory {
+import com.modelsolv.kaboom.model.canonical.nativeImpl.NativeCDMFactory;
+
+public interface CDMFactory {
+	
+	public static CDMFactory INSTANCE = new NativeCDMFactory();
 	
 	public CanonicalDataType createDataType(String name);
 	

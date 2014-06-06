@@ -12,9 +12,15 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modelsolv.kaboom.model.canonical.CDMFactory;
+import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.BOOLEAN;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DATE;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.FLOAT;
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
-import com.modelsolv.kaboom.model.resource.nativeImpl.NativeRDMFactory;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
 import com.modelsolv.reprezen.schemas.taxblasterapi.Address;
 
@@ -22,7 +28,8 @@ public class SerializerTest {
 
 	private ResourceDataModel addressRDM;
 	private ResourceDataModel customerRDM;
-	private RDMFactory factory;
+	private CDMFactory cdmFactory;
+	private RDMFactory rdmFactory;
 
 	@Before
 	public void setUp() throws Exception {
@@ -34,7 +41,8 @@ public class SerializerTest {
 	}
 
 	/**
-	 * Serialize a single object to a HAL JSON, and make sure it serialized correctly.
+	 * Serialize a single object to a HAL JSON, and make sure it serialized
+	 * correctly.
 	 */
 	@Test
 	public void testSerializeSingleObject() {
@@ -53,7 +61,8 @@ public class SerializerTest {
 	}
 
 	/**
-	 * Serialize a minimal object graph to a HAL JSON, and make sure it serialized correctly.
+	 * Serialize a minimal object graph to a HAL JSON, and make sure it
+	 * serialized correctly.
 	 */
 	@Test
 	public void testSerializeLinkedObject() {
@@ -85,42 +94,38 @@ public class SerializerTest {
 
 	private void buildResourceDataModel() {
 		// TODO inject using Guice?
-		factory = new NativeRDMFactory();
+		cdmFactory = CDMFactory.INSTANCE;
+		rdmFactory = RDMFactory.INSTANCE;
+
+		// Define canonical model
+		CanonicalDataType address = cdmFactory.createDataType("Address")
+				.withPrimitive("street1", STRING)
+				.withPrimitive("street2", STRING)
+				.withPrimitive("city", STRING)
+				.withPrimitive("stateOrProvince", STRING)
+				.withPrimitive("postalCode", STRING)
+				.withPrimitive("country", STRING);
 
 		// define a data model for a single "Address" entity
-		// TODO introduce CanonicalDataModel, and make the RDM realized from it.
-//		addressRDM = factory.createResourceDataModel();
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("street1"));
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("street2"));
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("city"));
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("stateOrProvince"));
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("postalCode"));
-//		addressRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("country"));
-//		
-//		// data model for a customer, with a reference to Address
-//		customerRDM = factory.createResourceDataModel();
+		addressRDM = rdmFactory.createResourceDataModel(address);
+
+		// data model for a customer, with a reference to Address
+//		customerRDM = rdmFactory.createResourceDataModel();
 //		customerRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("customerID"));
+//				rdmFactory.createRDMPrimitiveProperty("customerID"));
 //		customerRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("firstName"));
+//				rdmFactory.createRDMPrimitiveProperty("firstName"));
 //		customerRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("lastName"));
+//				rdmFactory.createRDMPrimitiveProperty("lastName"));
 //		customerRDM.getIncludedProperties().add(
-//				factory.createRDMPrimitiveProperty("companyName"));
-		
-		
-//		// Link to Address
-//		ReferenceLink addressLink = factory.createReferenceLink("address");
-//		addressLink.
-//		customerRDM.getIncludedProperties().add(
-//				);
-		
+//				rdmFactory.createRDMPrimitiveProperty("companyName"));
+
+		// // Link to Address
+		// ReferenceLink addressLink = factory.createReferenceLink("address");
+		// addressLink.
+		// customerRDM.getIncludedProperties().add(
+		// );
+
 	}
 
 	/**

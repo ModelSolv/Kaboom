@@ -2,12 +2,12 @@ package com.modelsolv.kaboom.model.canonical.nativeImpl;
 
 import com.modelsolv.kaboom.model.canonical.CDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
-import com.modelsolv.kaboom.model.canonical.CanonicalDataModelFactory;
+import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
 import com.modelsolv.kaboom.model.canonical.Cardinality;
 import com.modelsolv.kaboom.model.canonical.PrimitiveDataType;
 
-public class CanonicalDataModelFactoryImpl implements CanonicalDataModelFactory {
+public class NativeCDMFactory implements CDMFactory {
 
 	@Override
 	public CanonicalDataType createDataType(String name) {
