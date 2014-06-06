@@ -2,8 +2,6 @@ package com.modelsolv.kaboom.model.resource;
 
 import java.net.URI;
 
-import com.modelsolv.kaboom.object.CanonicalObjectReader;
-
 public interface ObjectResource {
 	
 	public Object getCanonicalObject();

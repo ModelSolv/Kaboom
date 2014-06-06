@@ -1,36 +1,27 @@
 package com.modelsolv.kaboom.model.resource.nativeImpl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import com.modelsolv.kaboom.model.canonical.CDMProperty;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.RDMProperty;
 import com.modelsolv.kaboom.model.resource.ReferenceLink;
-import com.modelsolv.kaboom.model.resource.ObjectResource;
-import com.modelsolv.kaboom.model.resource.ResourceDefinition;
-import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
-public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements ReferenceLink {
-	
-	private LinkedHashMap<String, RDMProperty> includedProperties;
-	
+public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements
+		ReferenceLink {
+
+	private RDMPropertyCollection includedProperties = new RDMPropertyCollection();
+
 	private String linkRelation;
-	
-	private ResourceDefinition targetResource;
-	
+
+	private ObjectResourceDefinition targetResource;
+
 	public ReferenceLinkImpl(CDMReferenceProperty property) {
 		super(property);
 	}
-	
+
 	@Override
 	public Iterable<RDMProperty> getIncludedProperties() {
-		if (includedProperties == null) {
-			includedProperties = new LinkedHashMap<String, RDMProperty>();
-		}
-		return includedProperties.values();
+		return includedProperties;
 	}
 
 	@Override
@@ -40,45 +31,42 @@ public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements Refer
 
 	@Override
 	public ReferenceLink includingProperties(CDMProperty... properties) {
-		// TODO Auto-generated method stub
-		return null;
+		includedProperties.withProperties(properties);
+		return this;
 	}
 
 	@Override
 	public ReferenceLink includingProperties(String... properties) {
-		// TODO Auto-generated method stub
+		includedProperties.withProperties(getTargetDataType(), properties);
 		return null;
 	}
 
 	@Override
 	public void setLinkRelation(String linkRelation) {
-		// TODO Auto-generated method stub
-		
+		this.linkRelation = linkRelation;
 	}
 
 	@Override
 	public ReferenceLink withLinkRelation(String linkRelation) {
-		// TODO Auto-generated method stub
-		return null;
+		setLinkRelation(linkRelation);
+		return this;
 	}
 
 	@Override
 	public ObjectResourceDefinition getTargetResourceDefinition() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.targetResource;
 	}
 
 	@Override
 	public void setTargetResourceDefinition(ObjectResourceDefinition resourceDef) {
-		// TODO Auto-generated method stub
-		
+		this.targetResource = resourceDef;
 	}
 
 	@Override
 	public ReferenceLink withTargetResourceDefinition(
 			ObjectResourceDefinition resourceDef) {
-		// TODO Auto-generated method stub
-		return null;
+		setTargetResourceDefinition(resourceDef);
+		return this;
 	}
 
 }

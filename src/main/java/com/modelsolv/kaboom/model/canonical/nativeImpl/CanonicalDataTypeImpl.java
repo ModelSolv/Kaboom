@@ -1,8 +1,6 @@
 package com.modelsolv.kaboom.model.canonical.nativeImpl;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import com.modelsolv.kaboom.model.canonical.CDMProperty;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;

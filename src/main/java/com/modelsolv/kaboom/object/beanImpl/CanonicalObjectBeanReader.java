@@ -1,7 +1,5 @@
 package com.modelsolv.kaboom.object.beanImpl;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.commons.beanutils.PropertyUtils;
 
 import com.modelsolv.kaboom.model.resource.RDMProperty;
@@ -29,5 +27,4 @@ public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 			throw new RuntimeException("Could not retrieve property value.", e);
 		}
 	}
-
 }

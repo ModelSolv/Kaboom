@@ -53,9 +53,6 @@ public class HalResource {
 				.withProperty("summary", "An example list")
 				.withRepresentation("td:owner", owner);
 
-		String xml = halResource.toString(RepresentationFactory.HAL_XML);
-		String json = halResource.toString(RepresentationFactory.HAL_JSON);
-
-		return json;
+		return halResource.toString(RepresentationFactory.HAL_JSON);
 	}
 }

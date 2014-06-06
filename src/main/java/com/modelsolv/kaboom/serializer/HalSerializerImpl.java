@@ -1,7 +1,5 @@
 package com.modelsolv.kaboom.serializer;
 
-import java.util.List;
-
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
 import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;

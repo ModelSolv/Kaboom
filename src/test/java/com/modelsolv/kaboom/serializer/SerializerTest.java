@@ -1,5 +1,8 @@
 package com.modelsolv.kaboom.serializer;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -13,12 +16,7 @@ import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.model.resource.nativeImpl.NativeRDMFactory;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
-import com.modelsolv.reprezen.restapi.ZenModel;
 import com.modelsolv.reprezen.schemas.taxblasterapi.Address;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SerializerTest {
 

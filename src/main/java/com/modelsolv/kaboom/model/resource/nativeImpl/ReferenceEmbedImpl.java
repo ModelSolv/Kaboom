@@ -1,10 +1,8 @@
 package com.modelsolv.kaboom.model.resource.nativeImpl;
 
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
-import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.ReferenceEmbed;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
-import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
 public class ReferenceEmbedImpl extends RDMReferencePropertyImpl implements
 		ReferenceEmbed {

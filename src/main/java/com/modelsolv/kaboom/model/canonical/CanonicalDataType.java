@@ -1,6 +1,5 @@
 package com.modelsolv.kaboom.model.canonical;
 
-import java.util.List;
 
 public interface CanonicalDataType {
 	
