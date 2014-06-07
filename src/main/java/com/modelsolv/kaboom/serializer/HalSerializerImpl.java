@@ -77,7 +77,7 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		// now add the link
 		CanonicalDataType cdt = refLink.getCDMProperty().getTargetDataType();
 		ObjectResourceDefinition ord = ObjectResourceDefinitionRegistry.INSTANCE.getResourceDefinition(cdt);
-		ObjectResource targetResource = ord.getResource(targetObj);
+		ObjectResource targetResource = ord.getResource(targetObj, reader);
 		refLinkRep.withLink(refLink.getLinkRelation(), targetResource.getURI());
 		// add the link structure to the parent structure.
 		rep.withRepresentation(refLink.getName(), refLinkRep);

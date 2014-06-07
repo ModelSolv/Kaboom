@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
 import com.modelsolv.kaboom.model.canonical.Cardinality;
+import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
+import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
@@ -76,6 +78,32 @@ public class SerializerTest {
 	public void testSerializeLinkedObject() {
 		buildResourceDataModel();
 		TaxFiling filing = buildTaxFiling();
+
+		// use the model to serialize to HAL
+		Serializer serializer = new HalSerializerImpl();
+		String message = serializer.serialize(filing,
+				new CanonicalObjectBeanReader(), taxFilingRDM);
+		assertFalse(StringUtils.isEmpty(message));
+		System.out.println(message);
+		JsonNode root = parseJson(message);
+		assertEquals("Hastings On Hudson", root.get("city").asText());
+		assertEquals("10706", root.get("postalCode").asText());
+	}
+	
+	/**
+	 * Serialize a minimal object graph to a HAL JSON, and make sure it
+	 * serialized correctly.
+	 */
+	@Test
+	public void testSerializeLinkedResource() {
+		buildResourceDataModel();
+		TaxFiling filing = buildTaxFiling();
+		
+//		// Build Object Resource definitions.
+//		ObjectResourceDefinition taxFilingORD = rdmFactory.createObjectResourceDefinition() ;
+//		
+//		ObjectResourceDefinitionRegistry registry =ObjectResourceDefinitionRegistry.INSTANCE;
+//		registry.registerDefinition(taxFilingORD);
 
 		// use the model to serialize to HAL
 		Serializer serializer = new HalSerializerImpl();

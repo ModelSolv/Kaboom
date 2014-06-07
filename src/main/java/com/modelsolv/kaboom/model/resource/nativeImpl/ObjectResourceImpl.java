@@ -10,6 +10,12 @@ public class ObjectResourceImpl implements ObjectResource {
 	private Object canonicalObject;
 	private ObjectResourceDefinition definition;
 	private URI uri;
+	
+	public ObjectResourceImpl(Object canonicalObject, URI uri, ObjectResourceDefinition definition) {
+		this.canonicalObject = canonicalObject;
+		this.uri = uri;
+		this.definition = definition;
+	}
 
 	@Override
 	public Object getCanonicalObject() {

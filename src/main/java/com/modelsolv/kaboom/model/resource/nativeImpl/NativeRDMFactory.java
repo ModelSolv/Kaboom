@@ -1,8 +1,12 @@
 package com.modelsolv.kaboom.model.resource.nativeImpl;
 
+import java.net.URI;
+
 import com.modelsolv.kaboom.model.canonical.CDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import com.modelsolv.kaboom.model.resource.ObjectResource;
+import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.RDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.resource.ReferenceEmbed;
@@ -36,6 +40,18 @@ public class NativeRDMFactory implements RDMFactory {
 	@Override
 	public ResourceDataModel createResourceDataModel(CanonicalDataType cdt) {
 		return new ResourceDataModelImpl(cdt);
+	}
+
+	@Override
+	public ObjectResource createObjectResource(Object canonicalObject, URI uri,
+			ObjectResourceDefinition definition) {
+		return new ObjectResourceImpl(canonicalObject, uri, definition);
+	}
+
+	@Override
+	public ObjectResourceDefinition createObjectResourceDefinition(
+			String uriTemplate, ResourceDataModel rdm) {
+		return new ObjectResourceDefinitionImpl(uriTemplate, rdm);
 	}
 
 }
