@@ -6,6 +6,7 @@ import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
 
@@ -23,7 +24,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
-import com.modelsolv.kaboom.model.canonical.Cardinality;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
@@ -34,7 +34,9 @@ import com.modelsolv.kaboom.testModels.Person;
 import com.modelsolv.kaboom.testModels.TaxFiling;
 
 public class SerializerTest {
-
+	private CanonicalDataType taxFilingType;
+	private CanonicalDataType addressType;
+	private CanonicalDataType personType;
 	private ResourceDataModel addressRDM;
 	private ResourceDataModel personRDM;
 	private ResourceDataModel taxFilingRDM;
@@ -83,37 +85,53 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
+		verifyTaxFilingMessage(message);
+	}
+
+	private void verifyTaxFilingMessage(String message) {
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
-		assertEquals("Hastings On Hudson", root.get("city").asText());
-		assertEquals("10706", root.get("postalCode").asText());
+		assertEquals("IRS", root.get("jurisdiction").asText());
+		assertEquals("1234", root.get("filingID").asText());
+		JsonNode personNode = root.get("_embedded").get("taxpayer");
+		assertNotNull(personNode);
+		assertEquals("McDermott", personNode.get("lastName").asText());
 	}
-	
+
 	/**
 	 * Serialize a minimal object graph to a HAL JSON, and make sure it
 	 * serialized correctly.
 	 */
 	@Test
 	public void testSerializeLinkedResource() {
+		ObjectResourceDefinitionRegistry registry = ObjectResourceDefinitionRegistry.INSTANCE;
 		buildResourceDataModel();
 		TaxFiling filing = buildTaxFiling();
-		
-//		// Build Object Resource definitions.
-//		ObjectResourceDefinition taxFilingORD = rdmFactory.createObjectResourceDefinition() ;
-//		
-//		ObjectResourceDefinitionRegistry registry =ObjectResourceDefinitionRegistry.INSTANCE;
-//		registry.registerDefinition(taxFilingORD);
+
+		// Build Object Resource definitions.
+		ObjectResourceDefinition taxFilingORD = rdmFactory
+				.createObjectResourceDefinition(
+						"http://modelsolv.com/taxblaster/api/taxFilings/{id}",
+						taxFilingRDM)
+				.withName("TaxFilingResource")
+				.withTemplateParameter("id",
+						taxFilingType.getProperty("filingID"));
+		registry.registerDefinition(taxFilingORD);
+
+		ObjectResourceDefinition personORD = rdmFactory
+				.createObjectResourceDefinition(
+						"http://modelsolv.com/taxBlaster/api/people/{id}",
+						personRDM)
+				.withName("PersonResource")
+				.withTemplateParameter("id",
+						personType.getProperty("taxpayerID"));
 
 		// use the model to serialize to HAL
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
-		assertFalse(StringUtils.isEmpty(message));
-		System.out.println(message);
-		JsonNode root = parseJson(message);
-		assertEquals("Hastings On Hudson", root.get("city").asText());
-		assertEquals("10706", root.get("postalCode").asText());
+		verifyTaxFilingMessage(message);
 	}
 
 	private JsonNode parseJson(String json) {
@@ -134,15 +152,14 @@ public class SerializerTest {
 		rdmFactory = RDMFactory.INSTANCE;
 
 		// Define canonical model
-		CanonicalDataType addressType = cdmFactory.createDataType("Address")
+		addressType = cdmFactory.createDataType("Address")
 				.withPrimitive("street1", STRING)
-				.withPrimitive("street2", STRING)
-				.withPrimitive("city", STRING)
+				.withPrimitive("street2", STRING).withPrimitive("city", STRING)
 				.withPrimitive("stateOrProvince", STRING)
 				.withPrimitive("postalCode", STRING)
 				.withPrimitive("country", STRING);
 
-		CanonicalDataType personType = cdmFactory.createDataType("Person")
+		personType = cdmFactory.createDataType("Person")
 				.withPrimitive("taxpayerID", STRING)
 				.withPrimitive("firstName", STRING)
 				.withPrimitive("lastName", STRING);
@@ -151,8 +168,7 @@ public class SerializerTest {
 		 * .withReference("addresses", addressType, Cardinality.ZERO_OR_MORE);
 		 */
 
-		CanonicalDataType taxFilingType = cdmFactory
-				.createDataType("TaxFiling")
+		taxFilingType = cdmFactory.createDataType("TaxFiling")
 				.withPrimitive("filingID", STRING)
 				.withReference("taxpayer", personType)
 				.withPrimitive("jurisdiction", STRING)
@@ -183,7 +199,7 @@ public class SerializerTest {
 
 	private TaxFiling buildTaxFiling() {
 		TaxFiling filing = new TaxFiling();
-		filing.setFilingID("1324");
+		filing.setFilingID("1234");
 		filing.setTaxpayer(buildPerson());
 		filing.setCurrency("USD");
 		filing.setGrossIncome(BigDecimal.valueOf(115000));
@@ -196,6 +212,7 @@ public class SerializerTest {
 
 	private Person buildPerson() {
 		Person p = new Person();
+		p.setTaxpayerID("555-33-5577");
 		p.setFirstName("Paul");
 		p.setLastName("McDermott");
 		p.getAddresses().add(buildSimpleAddress());

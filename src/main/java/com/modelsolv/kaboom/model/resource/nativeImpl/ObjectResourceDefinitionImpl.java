@@ -57,6 +57,10 @@ public class ObjectResourceDefinitionImpl implements ObjectResourceDefinition {
 
 	@Override
 	public void bindTemplateParameter(String parameter, CDMProperty property) {
+		if (!resourceDataModel.getCanonicalDataType().hasProperty(property)) {
+			throw new IllegalArgumentException(
+					"Parameter must be bound to a property of the canonical data type.");
+		}
 		parameterBindings.put(parameter, property);
 	}
 

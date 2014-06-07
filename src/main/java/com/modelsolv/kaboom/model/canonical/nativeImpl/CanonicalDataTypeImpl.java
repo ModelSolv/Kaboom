@@ -41,7 +41,7 @@ public class CanonicalDataTypeImpl implements CanonicalDataType {
 
 	@Override
 	public boolean hasProperty(CDMProperty property) {
-		return properties.containsKey(property);
+		return properties.containsValue(property);
 	}
 
 	@Override
