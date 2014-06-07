@@ -108,7 +108,8 @@ public class SerializerTest {
 		// Define canonical model
 		CanonicalDataType addressType = cdmFactory.createDataType("Address")
 				.withPrimitive("street1", STRING)
-				.withPrimitive("street2", STRING).withPrimitive("city", STRING)
+				.withPrimitive("street2", STRING)
+				.withPrimitive("city", STRING)
 				.withPrimitive("stateOrProvince", STRING)
 				.withPrimitive("postalCode", STRING)
 				.withPrimitive("country", STRING);
@@ -123,7 +124,8 @@ public class SerializerTest {
 		 */
 
 		CanonicalDataType taxFilingType = cdmFactory
-				.createDataType("TaxFiling").withPrimitive("filingID", STRING)
+				.createDataType("TaxFiling")
+				.withPrimitive("filingID", STRING)
 				.withReference("taxpayer", personType)
 				.withPrimitive("jurisdiction", STRING)
 				.withPrimitive("year", DATE).withPrimitive("period", INTEGER)
@@ -153,13 +155,13 @@ public class SerializerTest {
 
 	private TaxFiling buildTaxFiling() {
 		TaxFiling filing = new TaxFiling();
-		filing.setCurrency("USD");
 		filing.setFilingID("1324");
+		filing.setTaxpayer(buildPerson());
+		filing.setCurrency("USD");
 		filing.setGrossIncome(BigDecimal.valueOf(115000));
 		filing.setJurisdiction("IRS");
 		filing.setPeriod(0);
 		filing.setTaxLiability(BigDecimal.valueOf(18500));
-		filing.setTaxpayer(buildPerson());
 		filing.setYear(getXmlDate());
 		return filing;
 	}

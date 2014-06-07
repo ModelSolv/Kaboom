@@ -1,6 +1,6 @@
 package com.modelsolv.kaboom.model.canonical;
 
-public interface ReadableCDMPrimitiveProperty {
+public interface ReadableCDMPrimitiveProperty extends ReadableCDMProperty {
 
 	public PrimitiveDataType getType();
 	

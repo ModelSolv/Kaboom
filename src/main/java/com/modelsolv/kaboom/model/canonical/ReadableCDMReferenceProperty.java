@@ -1,6 +1,6 @@
 package com.modelsolv.kaboom.model.canonical;
 
-public interface ReadableCDMReferenceProperty {
+public interface ReadableCDMReferenceProperty extends ReadableCDMProperty {
 
 	public CanonicalDataType getTargetDataType();
 

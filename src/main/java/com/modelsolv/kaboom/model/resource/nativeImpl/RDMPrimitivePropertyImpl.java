@@ -13,7 +13,12 @@ public class RDMPrimitivePropertyImpl extends RDMPropertyImpl implements
 
 	@Override
 	public PrimitiveDataType getType() {
-		return ((CDMPrimitiveProperty) getCDMProperty()).getType();
+		return getCDMProperty().getType();
+	}
+	
+	@Override
+	public CDMPrimitiveProperty getCDMProperty() {
+		return (CDMPrimitiveProperty) super.getCDMProperty();
 	}
 
 }
