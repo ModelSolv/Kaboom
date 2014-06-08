@@ -1,5 +1,7 @@
 package com.modelsolv.kaboom.serializer;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
 import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
@@ -15,72 +17,119 @@ import com.theoryinpractise.halbuilder.api.RepresentationFactory;
 import com.theoryinpractise.halbuilder.standard.StandardRepresentationFactory;
 
 public class HalSerializerImpl extends AbstractSerializerImpl {
-	
+
 	private RepresentationFactory representationFactory;
 	private String halFormat = RepresentationFactory.HAL_JSON;
-	
+
 	public HalSerializerImpl() {
 		representationFactory = new StandardRepresentationFactory()
-		.withFlag(RepresentationFactory.PRETTY_PRINT);
+				.withFlag(RepresentationFactory.PRETTY_PRINT);
 
 	}
 
 	public HalSerializerImpl(String halFormat) {
 		this.halFormat = halFormat;
 		representationFactory = new StandardRepresentationFactory()
-		.withFlag(RepresentationFactory.PRETTY_PRINT);
+				.withFlag(RepresentationFactory.PRETTY_PRINT);
 
 	}
 
 	@Override
-	public String serialize(Object obj, CanonicalObjectReader reader, ResourceDataModel rdm) {
+	public String serialize(ObjectResource res, CanonicalObjectReader reader) {
+		// The object bound to this resource. .
+		Object obj = res.getCanonicalObject();
+		// The resource data model, with property exclusions and reference
+		// treatments.
+		ResourceDataModel rdm = res.getResourceDefinition()
+				.getResourceDataModel();
+		Representation rep = createNewRepresentation(res);
+		buildObjectRepresentation(rep, obj, reader, rdm);
+		return rep.toString(halFormat);
+	}
+
+	@Override
+	public String serialize(Object obj, CanonicalObjectReader reader,
+			ResourceDataModel rdm) {
 		// The HAL representation we're going to build.
 		Representation rep = representationFactory.newRepresentation();
 		buildObjectRepresentation(rep, obj, reader, rdm);
 		return rep.toString(halFormat);
 	}
 
-	private void buildObjectRepresentation(Representation rep, Object obj, CanonicalObjectReader reader, ResourceDataModel model) {
+	private void buildObjectRepresentation(Representation rep, Object obj,
+			CanonicalObjectReader reader, ResourceDataModel model) {
 		Iterable<RDMProperty> props = model.getIncludedProperties();
 		for (RDMProperty prop : props) {
-			if(!(prop instanceof RDMReferenceProperty)) {
+			if (!(prop instanceof RDMReferenceProperty)) {
 				// primitive field, just render it.
-				rep.withProperty(prop.getName(), reader.getPropertyValue(obj, prop));
+				rep.withProperty(prop.getName(),
+						reader.getPropertyValue(obj, prop));
 			} else {
 				// it's a reference, we have to see how to treat it.
-				if(prop instanceof ReferenceLink) {
+				if (prop instanceof ReferenceLink) {
 					// render a link
 					buildLink(rep, obj, reader, (ReferenceLink) prop);
 				} else {
 					// render an embedded object
 					ReferenceEmbed refEmbed = (ReferenceEmbed) prop;
-					Representation embeddedRep = representationFactory.newRepresentation();
-					Object targetObject = reader.getPropertyValue(obj, refEmbed);
-					buildObjectRepresentation(embeddedRep, targetObject, reader, refEmbed.getEmbeddedModel());
+					ResourceDataModel embeddedModel = refEmbed
+							.getEmbeddedModel();
+					Object targetObject = reader
+							.getPropertyValue(obj, refEmbed);
+					Representation embeddedRep = createNewRepresentation(
+							targetObject, reader, embeddedModel);
+					buildObjectRepresentation(embeddedRep, targetObject,
+							reader, refEmbed.getEmbeddedModel());
 					rep.withRepresentation(refEmbed.getName(), embeddedRep);
 				}
 			}
 		}
-		
 	}
 
-	private void buildLink(Representation rep, Object obj, CanonicalObjectReader reader,
-			ReferenceLink refLink) {
-		// build the outer link structure, to contain the refLink + decorations
-		// TODO: Maybe only do this if there are included properties in the refLink.
-		Representation refLinkRep = representationFactory.newRepresentation();
-		// add included properties, if any
+	private void buildLink(Representation rep, Object obj,
+			CanonicalObjectReader reader, ReferenceLink refLink) {
+
 		Object targetObj = reader.getPropertyValue(obj, refLink);
-		for (RDMProperty prop : refLink.getIncludedProperties()) {
-			refLinkRep.withProperty(prop.getName(), reader.getPropertyValue(targetObj, prop));
-		}
-		// now add the link
 		CanonicalDataType cdt = refLink.getCDMProperty().getTargetDataType();
-		ObjectResourceDefinition ord = ObjectResourceDefinitionRegistry.INSTANCE.getResourceDefinition(cdt);
+		ObjectResourceDefinition ord = ObjectResourceDefinitionRegistry.INSTANCE
+				.getResourceDefinition(cdt);
 		ObjectResource targetResource = ord.getResource(targetObj, reader);
-		refLinkRep.withLink(refLink.getLinkRelation(), targetResource.getURI());
-		// add the link structure to the parent structure.
-		rep.withRepresentation(refLink.getName(), refLinkRep);
+		if (refLink.isDecorated()) {
+			// Render decorated link in HAL as an embedded object.
+			Representation refLinkRep = representationFactory
+					.newRepresentation(targetResource.getURI());
+			// add included properties
+			for (RDMProperty prop : refLink.getIncludedProperties()) {
+				refLinkRep.withProperty(prop.getName(),
+						reader.getPropertyValue(targetObj, prop));
+			}
+			// embed the resource representation
+			rep.withRepresentation(refLink.getName(), refLinkRep);
+		} else {
+			// Render naked link
+			rep.withLink(refLink.getName(), targetResource.getURI());
+		}
+	}
+
+	private Representation createNewRepresentation(Object canonicalObject,
+			CanonicalObjectReader reader, ResourceDataModel rdm) {
+		ObjectResourceDefinitionRegistry registry = ObjectResourceDefinitionRegistry.INSTANCE;
+		ObjectResourceDefinition resourceDef = registry
+				.getResourceDefinition(rdm.getCanonicalDataType());
+		if (resourceDef != null) {
+			return createNewRepresentation(resourceDef.getResource(
+					canonicalObject, reader));
+		} else {
+			return representationFactory.newRepresentation();
+		}
+	}
+
+	private Representation createNewRepresentation(ObjectResource res) {
+		if (res.getURI() == null) {
+			return representationFactory.newRepresentation();
+		} else {
+			return representationFactory.newRepresentation(res.getURI());
+		}
 	}
 
 }

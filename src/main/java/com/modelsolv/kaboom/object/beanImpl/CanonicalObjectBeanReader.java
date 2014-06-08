@@ -2,6 +2,7 @@ package com.modelsolv.kaboom.object.beanImpl;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
+import com.modelsolv.kaboom.model.canonical.CDMProperty;
 import com.modelsolv.kaboom.model.resource.RDMProperty;
 import com.modelsolv.kaboom.object.CanonicalObjectReader;
 
@@ -16,6 +17,11 @@ public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 
 	@Override
 	public Object getPropertyValue(Object obj, RDMProperty prop) {
+		return getPropertyValue(obj, prop.getName());
+	}
+
+	@Override
+	public Object getPropertyValue(Object obj, CDMProperty prop) {
 		return getPropertyValue(obj, prop.getName());
 	}
 

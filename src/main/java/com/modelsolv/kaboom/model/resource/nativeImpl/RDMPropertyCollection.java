@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.validation.UnexpectedTypeException;
 
+import org.apache.commons.collections.iterators.EmptyIterator;
+
 import com.modelsolv.kaboom.model.canonical.CDMPrimitiveProperty;
 import com.modelsolv.kaboom.model.canonical.CDMProperty;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
@@ -21,7 +23,7 @@ import com.modelsolv.kaboom.model.resource.ReferenceLink;
 class RDMPropertyCollection implements Iterable<RDMProperty> {
 
 	private List<RDMProperty> rdmProperties;
-	
+
 	public RDMPropertyCollection withProperties(CDMProperty... properties) {
 		for (CDMProperty property : properties) {
 			addCDMProperty(property);
@@ -36,7 +38,8 @@ class RDMPropertyCollection implements Iterable<RDMProperty> {
 		return this;
 	}
 
-	public RDMPropertyCollection withProperties(CanonicalDataType cdt, String... properties) {
+	public RDMPropertyCollection withProperties(CanonicalDataType cdt,
+			String... properties) {
 		for (String propName : properties) {
 			CDMProperty property = cdt.getProperty(propName);
 			addCDMProperty(property);
@@ -46,7 +49,6 @@ class RDMPropertyCollection implements Iterable<RDMProperty> {
 
 	private void addCDMProperty(CDMProperty property) {
 		if (property instanceof CDMPrimitiveProperty) {
-			System.out.println(property);
 			addPrimitiveProperty((CDMPrimitiveProperty) property);
 		} else if (property instanceof CDMReferenceProperty) {
 			CDMReferenceProperty refProp = (CDMReferenceProperty) property;
@@ -121,13 +123,14 @@ class RDMPropertyCollection implements Iterable<RDMProperty> {
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<RDMProperty> iterator() {
-		return rdmProperties.iterator();
+		return isEmpty() ? EmptyIterator.INSTANCE : rdmProperties.iterator();
 	}
-	
+
 	public boolean isEmpty() {
 		return (rdmProperties == null) || (rdmProperties.isEmpty());
 	}
-	
+
 }

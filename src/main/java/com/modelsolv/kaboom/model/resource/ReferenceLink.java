@@ -22,6 +22,11 @@ public interface ReferenceLink extends RDMReferenceProperty {
 	public ReferenceLink includingProperties(CDMProperty... properties);
 	
 	public ReferenceLink includingProperties(String... properties);
+	
+	/**
+	 * Return true if the ReferenceLink has one or more included properties.
+	 */
+	public boolean isDecorated();
 
 	/**
 	 * 

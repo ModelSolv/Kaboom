@@ -85,13 +85,13 @@ public class ObjectResourceDefinitionRegistryImpl implements
 
 	@Override
 	public ObjectResourceDefinition getResourceDefinition(ResourceDataModel rdm) {
-		return rdmMap.containsKey(rdm) ? nameMap.get(rdm) : null;
+		return rdmMap.containsKey(rdm) ? rdmMap.get(rdm) : null;
 	}
 
 	@Override
 	public ObjectResourceDefinition getResourceDefinition(
 			CanonicalDataType cdt) {
-		return cdtMap.containsKey(cdt) ? nameMap.get(cdt) : null;
+		return cdtMap.containsKey(cdt) ? cdtMap.get(cdt) : null;
 	}
 
 }

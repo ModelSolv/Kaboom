@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
 import com.modelsolv.kaboom.model.resource.RDMFactory;
@@ -85,18 +86,25 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
-		verifyTaxFilingMessage(message);
+		verifyTaxFilingMessage(message, true);
 	}
 
-	private void verifyTaxFilingMessage(String message) {
+	private void verifyTaxFilingMessage(String message, boolean embedded) {
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
 		assertEquals("IRS", root.get("jurisdiction").asText());
 		assertEquals("1234", root.get("filingID").asText());
-		JsonNode personNode = root.get("_embedded").get("taxpayer");
-		assertNotNull(personNode);
-		assertEquals("McDermott", personNode.get("lastName").asText());
+		if(embedded) {
+			// check properties of embedded Person
+			JsonNode personNode = root.get("_embedded").get("taxpayer");
+			assertNotNull(personNode);
+			assertEquals("McDermott", personNode.get("lastName").asText());
+		} else {
+			// It's not embedded, it's linked.  Verify that the link is correct. 
+			assertEquals("http://modelsolv.com/taxblaster/api/taxFilings/1234",
+					root.get("_links").get("self").get("href").asText());
+		}
 	}
 
 	/**
@@ -126,12 +134,15 @@ public class SerializerTest {
 				.withName("PersonResource")
 				.withTemplateParameter("id",
 						personType.getProperty("taxpayerID"));
+		registry.registerDefinition(personORD);
 
-		// use the model to serialize to HAL
+		// Create the root resource, serialize to HAL
+		ObjectResource taxFilingResource = taxFilingORD.getResource(filing,
+				new CanonicalObjectBeanReader());
 		Serializer serializer = new HalSerializerImpl();
-		String message = serializer.serialize(filing,
-				new CanonicalObjectBeanReader(), taxFilingRDM);
-		verifyTaxFilingMessage(message);
+		String message = serializer.serialize(taxFilingResource,
+				new CanonicalObjectBeanReader());
+		verifyTaxFilingMessage(message, false);
 	}
 
 	private JsonNode parseJson(String json) {

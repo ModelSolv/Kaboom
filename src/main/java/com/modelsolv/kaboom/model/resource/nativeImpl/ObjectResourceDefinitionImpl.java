@@ -86,9 +86,13 @@ public class ObjectResourceDefinitionImpl implements ObjectResourceDefinition {
 		Matcher matcher = pattern.matcher(getURITemplate());
 		StringBuffer buffer = new StringBuffer();
 		while (matcher.find()) {
-			String propName = matcher.group(1);
+			String param = matcher.group(1);
+			CDMProperty boundProperty = parameterBindings.get(param);
+			if(boundProperty == null) {
+				throw new RuntimeException("Could not find a binding for the parameter " + param);
+			}
 			String replacement = (String) reader.getPropertyValue(
-					canonicalObject, propName);
+					canonicalObject, boundProperty.getName());
 			matcher.appendReplacement(buffer, "");
 			buffer.append(replacement);
 		}

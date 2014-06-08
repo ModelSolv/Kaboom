@@ -69,4 +69,9 @@ public class ReferenceLinkImpl extends RDMReferencePropertyImpl implements
 		return this;
 	}
 
+	@Override
+	public boolean isDecorated() {
+		return(!includedProperties.isEmpty());
+	}
+
 }
