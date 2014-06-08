@@ -63,11 +63,17 @@ public class ObjectResourceDefinitionRegistryImpl implements
 
 			void removeFromMap(ObjectResourceDefinition definition,
 					Map<?, ?> map) {
-				for (Entry<?, ?> entry : map.entrySet()) {
-					if (entry.getValue() == definition) {
-						nameMap.remove(entry.getKey());
+				boolean foundAndRemoved;
+				do {
+					foundAndRemoved = false;
+					for (Entry<?, ?> entry : map.entrySet()) {
+						if (entry.getValue() == definition) {
+							map.remove(entry.getKey());
+							foundAndRemoved = true;
+							break;
+						}
 					}
-				}
+				} while (foundAndRemoved); // removed one, look for another
 			}
 		}
 
@@ -89,8 +95,7 @@ public class ObjectResourceDefinitionRegistryImpl implements
 	}
 
 	@Override
-	public ObjectResourceDefinition getResourceDefinition(
-			CanonicalDataType cdt) {
+	public ObjectResourceDefinition getResourceDefinition(CanonicalDataType cdt) {
 		return cdtMap.containsKey(cdt) ? cdtMap.get(cdt) : null;
 	}
 

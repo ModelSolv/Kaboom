@@ -51,7 +51,7 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 	public String serialize(Object obj, CanonicalObjectReader reader,
 			ResourceDataModel rdm) {
 		// The HAL representation we're going to build.
-		Representation rep = representationFactory.newRepresentation();
+		Representation rep = createNewRepresentation(obj, reader, rdm);
 		buildObjectRepresentation(rep, obj, reader, rdm);
 		return rep.toString(halFormat);
 	}

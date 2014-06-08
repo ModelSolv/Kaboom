@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
+import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
 import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
@@ -35,14 +36,20 @@ import com.modelsolv.kaboom.testModels.Person;
 import com.modelsolv.kaboom.testModels.TaxFiling;
 
 public class SerializerTest {
-	private CanonicalDataType taxFilingType;
-	private CanonicalDataType addressType;
-	private CanonicalDataType personType;
-	private ResourceDataModel addressRDM;
-	private ResourceDataModel personRDM;
-	private ResourceDataModel taxFilingRDM;
 	private CDMFactory cdmFactory;
 	private RDMFactory rdmFactory;
+	private ObjectResourceDefinitionRegistry registry = ObjectResourceDefinitionRegistry.INSTANCE;
+
+	private CanonicalDataType taxFilingType;
+	private ResourceDataModel taxFilingRDM;
+	private ObjectResourceDefinition taxFilingORD;
+
+	private CanonicalDataType personType;
+	private ResourceDataModel personRDM;
+	private ObjectResourceDefinition personORD;
+
+	private CanonicalDataType addressType;
+	private ResourceDataModel addressRDM;
 
 	@Before
 	public void setUp() throws Exception {
@@ -86,55 +93,60 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
-		verifyTaxFilingMessage(message, true);
+		verifyTaxFilingMessage(message, false, false, false);
 	}
 
-	private void verifyTaxFilingMessage(String message, boolean embedded) {
+	private void verifyTaxFilingMessage(String message, boolean resourceRoot,
+			boolean linkedReference, boolean embeddedResource) {
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
 		assertEquals("IRS", root.get("jurisdiction").asText());
 		assertEquals("1234", root.get("filingID").asText());
-		if(embedded) {
-			// check properties of embedded Person
-			JsonNode personNode = root.get("_embedded").get("taxpayer");
+		if (resourceRoot) {
+			// check the self-link
+			assertEquals("http://modelsolv.com/taxblaster/api/taxFilings/1234",
+					root.at("/_links/self/href").asText());
+		}
+		if (linkedReference) {
+			// Verify the reference link to Person.
+			assertEquals(
+					"http://modelsolv.com/taxBlaster/api/people/555-33-5577",
+					root.get("_links").get("taxpayer").get("href").asText());
+		} else {
+			// Verify the embedded Person resource.
+			// try pointer expression
+			// JsonNode personNode = root.get("_embedded").get("taxpayer");
+			JsonNode personNode = root.at("/_embedded/taxpayer");
 			assertNotNull(personNode);
 			assertEquals("McDermott", personNode.get("lastName").asText());
-		} else {
-			// It's not embedded, it's linked.  Verify that the link is correct. 
-			assertEquals("http://modelsolv.com/taxblaster/api/taxFilings/1234",
-					root.get("_links").get("self").get("href").asText());
+			if (embeddedResource) {
+				// Verify that the reference is to a resource, having a
+				// self-link.
+				JsonNode personSelfLink = root.get("_embedded").get("taxpayer")
+						.get("_links").get("self").get("href");
+				assertEquals(
+						"http://modelsolv.com/taxBlaster/api/people/555-33-5577",
+						personSelfLink.asText());
+			}
 		}
 	}
 
 	/**
-	 * Serialize a minimal object graph to a HAL JSON, and make sure it
-	 * serialized correctly.
+	 * Serialize a minimal resource graph to a HAL JSON, and make sure it
+	 * serialized correctly. This exercises the default linking behavior on the
+	 * referenced object: the reference is to a canonical data type that has a
+	 * registered resource, so it will be interpreted as a ReferenceLink.
 	 */
 	@Test
 	public void testSerializeLinkedResource() {
-		ObjectResourceDefinitionRegistry registry = ObjectResourceDefinitionRegistry.INSTANCE;
 		buildResourceDataModel();
+
 		TaxFiling filing = buildTaxFiling();
-
-		// Build Object Resource definitions.
-		ObjectResourceDefinition taxFilingORD = rdmFactory
-				.createObjectResourceDefinition(
-						"http://modelsolv.com/taxblaster/api/taxFilings/{id}",
-						taxFilingRDM)
-				.withName("TaxFilingResource")
-				.withTemplateParameter("id",
-						taxFilingType.getProperty("filingID"));
-		registry.registerDefinition(taxFilingORD);
-
-		ObjectResourceDefinition personORD = rdmFactory
-				.createObjectResourceDefinition(
-						"http://modelsolv.com/taxBlaster/api/people/{id}",
-						personRDM)
-				.withName("PersonResource")
-				.withTemplateParameter("id",
-						personType.getProperty("taxpayerID"));
-		registry.registerDefinition(personORD);
+		// Register both resource definitions, so Person will be linked by
+		// default.
+		registerTaxFilingORD();
+		registerPersonORD();
 
 		// Create the root resource, serialize to HAL
 		ObjectResource taxFilingResource = taxFilingORD.getResource(filing,
@@ -142,7 +154,60 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(taxFilingResource,
 				new CanonicalObjectBeanReader());
-		verifyTaxFilingMessage(message, false);
+		verifyTaxFilingMessage(message, true, true, false);
+	}
+
+	/**
+	 * Serialize a minimal object graph to a HAL JSON. This exercises default
+	 * linking behavior on the root object: the root object is of a canonical
+	 * data type that has a registered resource, so it should automatically have
+	 * a self-link.
+	 */
+	@Test
+	public void testSerializeObjectAsResource() {
+		buildResourceDataModel();
+
+		TaxFiling filing = buildTaxFiling();
+		// Register the TaxFiling resource definition, so the root object will
+		// be recognized as a resource having a URI and self-link.
+		registerTaxFilingORD();
+
+		// Serialize the root object to HAL
+		Serializer serializer = new HalSerializerImpl();
+		String message = serializer.serialize(filing,
+				new CanonicalObjectBeanReader(), taxFilingRDM);
+		// Root is a resource, reference is an embedded object.
+		verifyTaxFilingMessage(message, true, false, false);
+	}
+
+	/**
+	 * Serialize a minimal object graph to a HAL JSON, with a reference
+	 * overridden from link to resource.
+	 */
+	@Test
+	public void testSerializeEmbeddedResource() {
+		buildResourceDataModel();
+
+		TaxFiling filing = buildTaxFiling();
+		taxFilingRDM.includingProperties("currency", "filingID", "grossIncome",
+				"jurisdiction", "period", "taxLiability", "year");
+		taxFilingRDM.withReferenceEmbed( //
+				rdmFactory.createReferenceEmbed( //
+						(CDMReferenceProperty) taxFilingType
+								.getProperty("taxpayer")));
+		// Register both resource definitions, so Person will be linked by
+		// default.
+		registerTaxFilingORD();
+		registerPersonORD();
+
+		// Create the root resource, serialize to HAL
+		ObjectResource taxFilingResource = taxFilingORD.getResource(filing,
+				new CanonicalObjectBeanReader());
+		Serializer serializer = new HalSerializerImpl();
+		String message = serializer.serialize(taxFilingResource,
+				new CanonicalObjectBeanReader());
+		// Root
+		verifyTaxFilingMessage(message, true, false, true);
 	}
 
 	private JsonNode parseJson(String json) {
@@ -155,6 +220,29 @@ public class SerializerTest {
 			throw new RuntimeException(
 					"Failed to parse JSON returned from serializer.", e);
 		}
+	}
+
+	private void registerTaxFilingORD() {
+		// Build Object Resource definitions.
+		taxFilingORD = rdmFactory
+				.createObjectResourceDefinition(
+						"http://modelsolv.com/taxblaster/api/taxFilings/{id}",
+						taxFilingRDM)
+				.withName("TaxFilingResource")
+				.withTemplateParameter("id",
+						taxFilingType.getProperty("filingID"));
+		registry.registerDefinition(taxFilingORD);
+	}
+
+	private void registerPersonORD() {
+		personORD = rdmFactory
+				.createObjectResourceDefinition(
+						"http://modelsolv.com/taxBlaster/api/people/{id}",
+						personRDM)
+				.withName("PersonResource")
+				.withTemplateParameter("id",
+						personType.getProperty("taxpayerID"));
+		registry.registerDefinition(personORD);
 	}
 
 	private void buildResourceDataModel() {
