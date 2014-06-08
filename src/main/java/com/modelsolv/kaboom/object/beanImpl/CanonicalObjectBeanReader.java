@@ -30,7 +30,7 @@ public class CanonicalObjectBeanReader implements CanonicalObjectReader {
 		try {
 			return PropertyUtils.getProperty(obj, propName);
 		} catch (Exception e) {
-			throw new RuntimeException("Could not retrieve property value.", e);
+			throw new RuntimeException("Could not retrieve value for property " + propName, e);
 		}
 	}
 }

@@ -1,13 +1,14 @@
 package com.modelsolv.kaboom.serializer;
 
+import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.BOOLEAN;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DATE;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.DECIMAL;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.math.BigDecimal;
 
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modelsolv.kaboom.model.canonical.CDMFactory;
 import com.modelsolv.kaboom.model.canonical.CDMReferenceProperty;
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import com.modelsolv.kaboom.model.canonical.Cardinality;
 import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
@@ -33,6 +35,7 @@ import com.modelsolv.kaboom.model.resource.RDMFactory;
 import com.modelsolv.kaboom.model.resource.ResourceDataModel;
 import com.modelsolv.kaboom.object.beanImpl.CanonicalObjectBeanReader;
 import com.modelsolv.kaboom.testModels.Address;
+import com.modelsolv.kaboom.testModels.Company;
 import com.modelsolv.kaboom.testModels.Person;
 import com.modelsolv.kaboom.testModels.TaxFiling;
 
@@ -48,6 +51,10 @@ public class SerializerTest {
 	private CanonicalDataType personType;
 	private ResourceDataModel personRDM;
 	private ObjectResourceDefinition personORD;
+
+	private CanonicalDataType companyType;
+	private ResourceDataModel companyRDM;
+	private ObjectResourceDefinition companyORD;
 
 	private CanonicalDataType addressType;
 	private ResourceDataModel addressRDM;
@@ -68,7 +75,8 @@ public class SerializerTest {
 	@Test
 	public void testSerializeSingleObject() {
 		buildResourceDataModel();
-		Address address = buildSimpleAddress();
+		Address address = buildAddress("123 Sesame Street", null,
+				"Ferris Park", "MI", "88717");
 
 		// use the model to serialize to HAL
 		Serializer serializer = new HalSerializerImpl();
@@ -77,8 +85,8 @@ public class SerializerTest {
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
-		assertEquals("Hastings On Hudson", root.get("city").asText());
-		assertEquals("10706", root.get("postalCode").asText());
+		assertEquals("Ferris Park", root.get("city").asText());
+		assertEquals("88717", root.get("postalCode").asText());
 	}
 
 	/**
@@ -113,7 +121,7 @@ public class SerializerTest {
 			// Verify the reference link to Person.
 			assertEquals(
 					"http://modelsolv.com/taxBlaster/api/people/555-33-5577",
-					root.get("_links").get("taxpayer").get("href").asText());
+					root.at("/_links/taxpayer/href").asText());
 		} else {
 			// Verify the embedded Person resource.
 			// try pointer expression
@@ -124,8 +132,8 @@ public class SerializerTest {
 			if (embeddedResource) {
 				// Verify that the reference is to a resource, having a
 				// self-link.
-				JsonNode personSelfLink = root.get("_embedded").get("taxpayer")
-						.get("_links").get("self").get("href");
+				JsonNode personSelfLink = root
+						.at("/_embedded/taxpayer/_links/self/href");
 				assertEquals(
 						"http://modelsolv.com/taxBlaster/api/people/555-33-5577",
 						personSelfLink.asText());
@@ -191,11 +199,14 @@ public class SerializerTest {
 
 		TaxFiling filing = buildTaxFiling();
 		taxFilingRDM.includingProperties("currency", "filingID", "grossIncome",
-				"jurisdiction", "period", "taxLiability", "year");
-		taxFilingRDM.withReferenceEmbed( //
-				rdmFactory.createReferenceEmbed( //
-						(CDMReferenceProperty) taxFilingType
-								.getProperty("taxpayer")));
+				"jurisdiction", "period", "taxLiability", "year")
+				.withReferenceEmbed(
+						rdmFactory.createReferenceEmbed(
+								(CDMReferenceProperty) taxFilingType
+										.getProperty("taxpayer"))
+								.withEmbeddedDataModel(
+										personRDM.includingProperties(
+												"taxpayerID", "lastName")));
 		// Register both resource definitions, so Person will be linked by
 		// default.
 		registerTaxFilingORD();
@@ -209,10 +220,19 @@ public class SerializerTest {
 				new CanonicalObjectBeanReader());
 		// Root
 		verifyTaxFilingMessage(message, true, false, true);
+		// Verify embedded data model
+		JsonNode root = parseJson(message);
+		JsonNode person = root.at("/_embedded/taxpayer");
+		assertNotNull(person);
+		assertEquals("555-33-5577", person.get("taxpayerID").asText());
+		assertEquals("McDermott", person.get("lastName").asText());
+		assertNull(person.get("firstName"));
+		assertNull(person.get("_embedded"));
 	}
 
 	/**
-	 * Serialize to HAL with explicit includedProperties.  Make sure that the excluded properties are not there.
+	 * Serialize to HAL with explicit includedProperties. Make sure that the
+	 * excluded properties are not there.
 	 */
 	@Test
 	public void testIncludedProperties() {
@@ -220,7 +240,8 @@ public class SerializerTest {
 
 		TaxFiling filing = buildTaxFiling();
 		// exclude taxpayer, currency, grossIncome, period
-		taxFilingRDM.includingProperties("filingID", "jurisdiction", "taxLiability", "year");
+		taxFilingRDM.includingProperties("filingID", "jurisdiction",
+				"taxLiability", "year");
 
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
@@ -285,14 +306,20 @@ public class SerializerTest {
 				.withPrimitive("postalCode", STRING)
 				.withPrimitive("country", STRING);
 
-		personType = cdmFactory.createDataType("Person")
+		companyType = cdmFactory.createDataType("Company")
+				.withPrimitive("companyID", STRING)
+				.withPrimitive("EIN", STRING)
+				.withPrimitive("companyName", STRING)
+				.withPrimitive("form", STRING).withPrimitive("active", BOOLEAN);
+
+		personType = cdmFactory
+				.createDataType("Person")
 				.withPrimitive("taxpayerID", STRING)
 				.withPrimitive("firstName", STRING)
-				.withPrimitive("lastName", STRING);
-		// multi-valued fields don't work yet.
-		/*
-		 * .withReference("addresses", addressType, Cardinality.ZERO_OR_MORE);
-		 */
+				.withPrimitive("lastName", STRING)
+				.withPrimitive("otherNames", STRING, Cardinality.ZERO_OR_MORE)
+				.withReference("addresses", addressType,
+						Cardinality.ZERO_OR_MORE);
 
 		taxFilingType = cdmFactory.createDataType("TaxFiling")
 				.withPrimitive("filingID", STRING)
@@ -314,12 +341,14 @@ public class SerializerTest {
 	 * 
 	 * @return
 	 */
-	private Address buildSimpleAddress() {
+	private Address buildAddress(String street1, String street2, String city,
+			String state, String zip) {
 		Address address = new Address();
-		address.setStreet1("42 Donald Drive");
-		address.setCity("Hastings On Hudson");
-		address.setStateOrProvince("NY");
-		address.setPostalCode("10706");
+		address.setStreet1(street1);
+		address.setStreet2(street2);
+		address.setCity(city);
+		address.setStateOrProvince(state);
+		address.setPostalCode(zip);
 		return address;
 	}
 
@@ -341,8 +370,26 @@ public class SerializerTest {
 		p.setTaxpayerID("555-33-5577");
 		p.setFirstName("Paul");
 		p.setLastName("McDermott");
-		p.getAddresses().add(buildSimpleAddress());
+		p.getOtherNames().add("Paul E. McDermott");
+		p.getOtherNames().add("Paul Edward McDermott");
+		p.getAddresses().add(
+				buildAddress("123 Sesame Street", null, "Ferris Park", "MI",
+						"88717"));
+		p.getAddresses().add(
+				buildAddress("425 Dobbs Industrial Court", "Suite 360",
+						"Ferris Park", "MI", "88718"));
+		p.setEmployer(buildCompany());
 		return p;
+	}
+
+	private Company buildCompany() {
+		Company c = new Company();
+		c.setActive(true);
+		c.setCompanyID("978234");
+		c.setCompanyName("Taxomatic, Inc.");
+		c.setEIN("27-3611418");
+		c.setForm("C");
+		return c;
 	}
 
 	private XMLGregorianCalendar getXmlDate() {

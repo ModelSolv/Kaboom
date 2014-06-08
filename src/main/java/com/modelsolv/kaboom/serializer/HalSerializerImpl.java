@@ -1,8 +1,12 @@
 package com.modelsolv.kaboom.serializer;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.modelsolv.kaboom.model.canonical.CanonicalDataType;
+import com.modelsolv.kaboom.model.canonical.Cardinality;
 import com.modelsolv.kaboom.model.resource.ObjectResource;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinition;
 import com.modelsolv.kaboom.model.resource.ObjectResourceDefinitionRegistry;
@@ -76,11 +80,25 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 							.getEmbeddedModel();
 					Object targetObject = reader
 							.getPropertyValue(obj, refEmbed);
-					Representation embeddedRep = createNewRepresentation(
-							targetObject, reader, embeddedModel);
-					buildObjectRepresentation(embeddedRep, targetObject,
-							reader, refEmbed.getEmbeddedModel());
-					rep.withRepresentation(refEmbed.getName(), embeddedRep);
+					if (targetObject instanceof Iterable<?>) {
+						Iterable<?> targetCollection = (Iterable<?>) targetObject;
+						for (Object targetElement : targetCollection) {
+							Representation embeddedRep = createNewRepresentation(
+									targetElement, reader, embeddedModel);
+							buildObjectRepresentation(embeddedRep,
+									targetElement, reader,
+									refEmbed.getEmbeddedModel());
+							rep.withRepresentation(refEmbed.getName(),
+									embeddedRep);
+						}
+					} else {
+						Representation embeddedRep = createNewRepresentation(
+								targetObject, reader, embeddedModel);
+
+						buildObjectRepresentation(embeddedRep, targetObject,
+								reader, refEmbed.getEmbeddedModel());
+						rep.withRepresentation(refEmbed.getName(), embeddedRep);
+					}
 				}
 			}
 		}
@@ -131,5 +149,4 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 			return representationFactory.newRepresentation(res.getURI());
 		}
 	}
-
 }

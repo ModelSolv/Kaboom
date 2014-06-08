@@ -63,8 +63,10 @@ public class Person {
 	protected String lastName;
     protected String firstName;
 	protected List<Address> addresses = new ArrayList<Address>();
+	protected Company employer;
+	protected List<String> otherNames = new ArrayList<String>();
 
-    /**s
+	/**s
      * Gets the value of the addressList property.
      * 
      * @return
@@ -147,4 +149,18 @@ public class Person {
     public void setFirstName(String value) {
         this.firstName = value;
     }
+    
+    public Company getEmployer() {
+		return employer;
+	}
+
+	public void setEmployer(Company employer) {
+		this.employer = employer;
+	}
+	
+	public List<String> getOtherNames() {
+		return otherNames;
+	}
+
+
 }
