@@ -6,6 +6,7 @@ import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.INTEGER;
 import static com.modelsolv.kaboom.model.canonical.PrimitiveDataType.STRING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 
 import java.math.BigDecimal;
@@ -208,6 +209,32 @@ public class SerializerTest {
 				new CanonicalObjectBeanReader());
 		// Root
 		verifyTaxFilingMessage(message, true, false, true);
+	}
+
+	/**
+	 * Serialize to HAL with explicit includedProperties.  Make sure that the excluded properties are not there.
+	 */
+	@Test
+	public void testIncludedProperties() {
+		buildResourceDataModel();
+
+		TaxFiling filing = buildTaxFiling();
+		// exclude taxpayer, currency, grossIncome, period
+		taxFilingRDM.includingProperties("filingID", "jurisdiction", "taxLiability", "year");
+
+		Serializer serializer = new HalSerializerImpl();
+		String message = serializer.serialize(filing,
+				new CanonicalObjectBeanReader(), taxFilingRDM);
+
+		assertFalse(StringUtils.isEmpty(message));
+		System.out.println(message);
+		JsonNode root = parseJson(message);
+		assertEquals("IRS", root.get("jurisdiction").asText());
+		assertEquals("1234", root.get("filingID").asText());
+		assertNull(root.get("taxpayer"));
+		assertNull(root.get("currency"));
+		assertNull(root.get("_links"));
+		assertNull(root.get("_embedded"));
 	}
 
 	private JsonNode parseJson(String json) {
