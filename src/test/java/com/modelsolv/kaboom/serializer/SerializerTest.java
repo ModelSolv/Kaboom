@@ -102,11 +102,12 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
-		verifyTaxFilingMessage(message, false, false, false);
+		verifyTaxFilingMessage(message, false, false, false, true);
 	}
 
 	private void verifyTaxFilingMessage(String message, boolean resourceRoot,
-			boolean linkedReference, boolean embeddedResource) {
+			boolean linkedReference, boolean embeddedResource,
+			boolean checkMultiValued) {
 		assertFalse(StringUtils.isEmpty(message));
 		System.out.println(message);
 		JsonNode root = parseJson(message);
@@ -129,6 +130,18 @@ public class SerializerTest {
 			JsonNode personNode = root.at("/_embedded/taxpayer");
 			assertNotNull(personNode);
 			assertEquals("McDermott", personNode.get("lastName").asText());
+			if (checkMultiValued) {
+				assertEquals("Paul E. McDermott", personNode
+						.at("/otherNames/0").asText());
+				assertEquals("Paul Edward McDermott",
+						personNode.at("/otherNames/1").asText());
+				assertEquals("123 Sesame Street",
+						personNode.at("/_embedded/addresses/0/street1")
+								.asText());
+				assertEquals("425 Dobbs Industrial Court",
+						personNode.at("/_embedded/addresses/1/street1")
+								.asText());
+			}
 			if (embeddedResource) {
 				// Verify that the reference is to a resource, having a
 				// self-link.
@@ -163,7 +176,7 @@ public class SerializerTest {
 		Serializer serializer = new HalSerializerImpl();
 		String message = serializer.serialize(taxFilingResource,
 				new CanonicalObjectBeanReader());
-		verifyTaxFilingMessage(message, true, true, false);
+		verifyTaxFilingMessage(message, true, true, false, true);
 	}
 
 	/**
@@ -186,7 +199,7 @@ public class SerializerTest {
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
 		// Root is a resource, reference is an embedded object.
-		verifyTaxFilingMessage(message, true, false, false);
+		verifyTaxFilingMessage(message, true, false, false, false);
 	}
 
 	/**
@@ -219,7 +232,7 @@ public class SerializerTest {
 		String message = serializer.serialize(taxFilingResource,
 				new CanonicalObjectBeanReader());
 		// Root
-		verifyTaxFilingMessage(message, true, false, true);
+		verifyTaxFilingMessage(message, true, false, true, false);
 		// Verify embedded data model
 		JsonNode root = parseJson(message);
 		JsonNode person = root.at("/_embedded/taxpayer");
