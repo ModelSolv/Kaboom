@@ -79,7 +79,7 @@ public class SerializerTest {
 				"Ferris Park", "MI", "88717");
 
 		// use the model to serialize to HAL
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(address,
 				new CanonicalObjectBeanReader(), addressRDM);
 		assertFalse(StringUtils.isEmpty(message));
@@ -99,7 +99,7 @@ public class SerializerTest {
 		TaxFiling filing = buildTaxFiling();
 
 		// use the model to serialize to HAL
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
 		verifyTaxFilingMessage(message, false, false, false, true);
@@ -173,7 +173,7 @@ public class SerializerTest {
 		// Create the root resource, serialize to HAL
 		ObjectResource taxFilingResource = taxFilingORD.getResource(filing,
 				new CanonicalObjectBeanReader());
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(taxFilingResource,
 				new CanonicalObjectBeanReader());
 		verifyTaxFilingMessage(message, true, true, false, true);
@@ -195,7 +195,7 @@ public class SerializerTest {
 		registerTaxFilingORD();
 
 		// Serialize the root object to HAL
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
 		// Root is a resource, reference is an embedded object.
@@ -228,7 +228,7 @@ public class SerializerTest {
 		// Create the root resource, serialize to HAL
 		ObjectResource taxFilingResource = taxFilingORD.getResource(filing,
 				new CanonicalObjectBeanReader());
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(taxFilingResource,
 				new CanonicalObjectBeanReader());
 		// Root
@@ -256,7 +256,7 @@ public class SerializerTest {
 		taxFilingRDM.includingProperties("filingID", "jurisdiction",
 				"taxLiability", "year");
 
-		Serializer serializer = new HalSerializerImpl();
+		Serializer serializer = getSerializer();
 		String message = serializer.serialize(filing,
 				new CanonicalObjectBeanReader(), taxFilingRDM);
 
@@ -332,7 +332,12 @@ public class SerializerTest {
 				.withPrimitive("lastName", STRING)
 				.withPrimitive("otherNames", STRING, Cardinality.ZERO_OR_MORE)
 				.withReference("addresses", addressType,
-						Cardinality.ZERO_OR_MORE);
+						Cardinality.ZERO_OR_MORE)
+				.withReference("employer", companyType);
+
+		// Add inverse reference.
+		companyType.withReference("employees", personType,
+				Cardinality.ZERO_OR_MORE);
 
 		taxFilingType = cdmFactory.createDataType("TaxFiling")
 				.withPrimitive("filingID", STRING)
@@ -391,7 +396,8 @@ public class SerializerTest {
 		p.getAddresses().add(
 				buildAddress("425 Dobbs Industrial Court", "Suite 360",
 						"Ferris Park", "MI", "88718"));
-		p.setEmployer(buildCompany());
+		// create reference cycle
+		p.setEmployer(buildCompany().withEmployee(p));
 		return p;
 	}
 
@@ -414,5 +420,9 @@ public class SerializerTest {
 			throw new RuntimeException("Could not build XMLGregorianCalendar.",
 					e);
 		}
+	}
+	
+	private Serializer getSerializer() {
+		return new HalSerializerImpl().withMaxObjectCount(200);
 	}
 }

@@ -1,11 +1,15 @@
 package com.modelsolv.kaboom.testModels;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Company {
 	private String companyID;
 	private String EIN;
 	private String companyName;
 	private String form;
-	private Boolean Active;
+	private Boolean active;
+	private Set<Person> employees=new HashSet<Person>();
 
 	public String getCompanyID() {
 		return companyID;
@@ -40,10 +44,21 @@ public class Company {
 	}
 
 	public Boolean getActive() {
-		return Active;
+		return active;
 	}
 
 	public void setActive(Boolean active) {
-		Active = active;
+		this.active = active;
+	}
+	
+	public Company withEmployee(Person employee) {
+		if(!employees.contains(employee)) {
+			employees.add(employee);
+		}
+		return this;
+	}
+	
+	public Iterable<Person> getEmployees() {
+		return employees;
 	}
 }

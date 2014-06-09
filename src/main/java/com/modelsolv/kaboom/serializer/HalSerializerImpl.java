@@ -2,6 +2,7 @@ package com.modelsolv.kaboom.serializer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Stack;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -25,6 +26,10 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 	private RepresentationFactory representationFactory;
 	private String halFormat = RepresentationFactory.HAL_JSON;
 
+	// Object count, used to test for cyclical embedding scenarios.
+	private int objectCount = 0;
+	private int maxObjectCount;
+
 	public HalSerializerImpl() {
 		representationFactory = new StandardRepresentationFactory()
 				.withFlag(RepresentationFactory.PRETTY_PRINT);
@@ -40,6 +45,7 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 
 	@Override
 	public String serialize(ObjectResource res, CanonicalObjectReader reader) {
+		objectCount = 0;
 		// The object bound to this resource. .
 		Object obj = res.getCanonicalObject();
 		// The resource data model, with property exclusions and reference
@@ -47,21 +53,33 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		ResourceDataModel rdm = res.getResourceDefinition()
 				.getResourceDataModel();
 		Representation rep = createNewRepresentation(res);
-		buildObjectRepresentation(rep, obj, reader, rdm);
+		buildObjectRepresentation(rep, obj, reader, rdm, new Stack<Object>());
 		return rep.toString(halFormat);
 	}
 
 	@Override
 	public String serialize(Object obj, CanonicalObjectReader reader,
 			ResourceDataModel rdm) {
+		objectCount = 0;
 		// The HAL representation we're going to build.
 		Representation rep = createNewRepresentation(obj, reader, rdm);
-		buildObjectRepresentation(rep, obj, reader, rdm);
+		buildObjectRepresentation(rep, obj, reader, rdm, new Stack<Object>());
 		return rep.toString(halFormat);
 	}
 
-	private void buildObjectRepresentation(Representation rep, Object obj,
-			CanonicalObjectReader reader, ResourceDataModel model) {
+	private boolean buildObjectRepresentation(Representation rep, Object obj,
+			CanonicalObjectReader reader, ResourceDataModel model,
+			Stack<Object> objectStack) {
+		if ((maxObjectCount >= 1) && (++objectCount >= maxObjectCount)) {
+			throw new RuntimeException(
+					"Object graph has exceeded the maximum object count.  Suspected cycle in resource embedding.");
+		}
+		if (objectStack.contains(obj)) {
+			// object is already rendered; rendering again would create an
+			// embedding cycle.
+			return false;
+		}
+		objectStack.push(obj);
 		Iterable<RDMProperty> props = model.getIncludedProperties();
 		for (RDMProperty prop : props) {
 			if (!(prop instanceof RDMReferenceProperty)) {
@@ -85,23 +103,28 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 						for (Object targetElement : targetCollection) {
 							Representation embeddedRep = createNewRepresentation(
 									targetElement, reader, embeddedModel);
-							buildObjectRepresentation(embeddedRep,
+							if (buildObjectRepresentation(embeddedRep,
 									targetElement, reader,
-									refEmbed.getEmbeddedModel());
-							rep.withRepresentation(refEmbed.getName(),
-									embeddedRep);
+									refEmbed.getEmbeddedModel(), objectStack)) {
+								rep.withRepresentation(refEmbed.getName(),
+										embeddedRep);
+							}
 						}
 					} else {
 						Representation embeddedRep = createNewRepresentation(
 								targetObject, reader, embeddedModel);
 
-						buildObjectRepresentation(embeddedRep, targetObject,
-								reader, refEmbed.getEmbeddedModel());
-						rep.withRepresentation(refEmbed.getName(), embeddedRep);
+						if (buildObjectRepresentation(embeddedRep,
+								targetObject, reader,
+								refEmbed.getEmbeddedModel(), objectStack)) {
+							rep.withRepresentation(refEmbed.getName(),
+									embeddedRep);
+						}
 					}
 				}
 			}
 		}
+		return true;
 	}
 
 	private void buildLink(Representation rep, Object obj,
@@ -148,5 +171,18 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		} else {
 			return representationFactory.newRepresentation(res.getURI());
 		}
+	}
+
+	public int getMaxObjectCount() {
+		return maxObjectCount;
+	}
+
+	public void setMaxObjectCount(int objectCount) {
+		this.maxObjectCount = objectCount;
+	}
+
+	public HalSerializerImpl withMaxObjectCount(int objectCount) {
+		setMaxObjectCount(objectCount);
+		return this;
 	}
 }
