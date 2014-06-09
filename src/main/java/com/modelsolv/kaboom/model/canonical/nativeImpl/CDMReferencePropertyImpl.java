@@ -8,13 +8,15 @@ public class CDMReferencePropertyImpl extends CDMPropertyImpl implements
 		CDMReferenceProperty {
 
 	private CanonicalDataType type;
-	
+	private CDMReferenceProperty inverse;
+
 	public CDMReferencePropertyImpl(String name, CanonicalDataType type) {
 		super(name);
 		setTargetDataType(type);
 	}
 
-	public CDMReferencePropertyImpl(String name, CanonicalDataType type, Cardinality cardinality) {
+	public CDMReferencePropertyImpl(String name, CanonicalDataType type,
+			Cardinality cardinality) {
 		super(name, cardinality);
 		setTargetDataType(type);
 	}
@@ -29,4 +31,25 @@ public class CDMReferencePropertyImpl extends CDMPropertyImpl implements
 		this.type = type;
 	}
 
+	@Override
+	public CDMReferenceProperty withTargetDataType(CanonicalDataType type) {
+		setTargetDataType(type);
+		return this;
+	}
+
+	@Override
+	public CDMReferenceProperty getInverseProperty() {
+		return inverse;
+	}
+
+	@Override
+	public void setInverseProperty(CDMReferenceProperty inverse) {
+		this.inverse = inverse;
+	}
+
+	@Override
+	public CDMReferenceProperty withInverseProperty(CDMReferenceProperty inverse) {
+		setInverseProperty(inverse);
+		return this;
+	}
 }

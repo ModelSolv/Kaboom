@@ -40,7 +40,6 @@ public class HalSerializerImpl extends AbstractSerializerImpl {
 		this.halFormat = halFormat;
 		representationFactory = new StandardRepresentationFactory()
 				.withFlag(RepresentationFactory.PRETTY_PRINT);
-
 	}
 
 	@Override

@@ -338,6 +338,10 @@ public class SerializerTest {
 		// Add inverse reference.
 		companyType.withReference("employees", personType,
 				Cardinality.ZERO_OR_MORE);
+		CDMReferenceProperty companyEmployees = (CDMReferenceProperty) companyType.getProperty("employees");
+		CDMReferenceProperty personEmployer = (CDMReferenceProperty) personType.getProperty("employer");
+		companyEmployees.setInverseProperty(personEmployer);
+		personEmployer.setInverseProperty(companyEmployees);
 
 		taxFilingType = cdmFactory.createDataType("TaxFiling")
 				.withPrimitive("filingID", STRING)

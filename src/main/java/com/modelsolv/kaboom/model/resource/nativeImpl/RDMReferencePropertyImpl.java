@@ -15,10 +15,15 @@ public class RDMReferencePropertyImpl extends RDMPropertyImpl implements
 	public CanonicalDataType getTargetDataType() {
 		return getCDMProperty().getTargetDataType();
 	}
-	
+
 	@Override
 	public CDMReferenceProperty getCDMProperty() {
 		return (CDMReferenceProperty) super.getCDMProperty();
+	}
+
+	@Override
+	public CDMReferenceProperty getInverseProperty() {
+		return getCDMProperty().getInverseProperty();
 	}
 
 }
