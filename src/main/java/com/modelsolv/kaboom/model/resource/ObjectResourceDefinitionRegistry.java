@@ -22,8 +22,7 @@ import com.modelsolv.kaboom.model.resource.nativeImpl.ObjectResourceDefinitionRe
  */
 public interface ObjectResourceDefinitionRegistry {
 
-	// TODO: Check proper use of Singleton pattern, consider DI/Resource
-	// Locator.
+	// TODO: Check use of Singleton pattern, consider DI/Resource Locator.
 	public static ObjectResourceDefinitionRegistry INSTANCE = new ObjectResourceDefinitionRegistryImpl();
 
 	/**

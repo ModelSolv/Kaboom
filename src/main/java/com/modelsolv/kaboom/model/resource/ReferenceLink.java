@@ -18,12 +18,6 @@ public interface ReferenceLink extends RDMReferenceProperty {
 	 * The list of included "decorator" properties included in the
 	 * ReferenceLink. These may be defined directly in the ReferenceLink, or in
 	 * a named LinkDescriptor.
-	 * <p>
-	 * TODO : These may be modeled as property paths, allowing promotion
-	 * of properties through arbitrary levels. We don't want to complicate the
-	 * serializer with this, so for now we assume they are direct properties of
-	 * the target data type. Implementation should exclude indirect properties
-	 * for now.
 	 * 
 	 * @return
 	 */

@@ -71,7 +71,6 @@ public class SerializerTest {
 
 	@Before
 	public void setUp() throws Exception {
-		// buildResourceDataModel();
 	}
 
 	@After
@@ -317,7 +316,7 @@ public class SerializerTest {
 	}
 
 	private void buildResourceDataModel() {
-		// TODO inject using Guice?
+		// TODO inject using Guice
 		cdmFactory = CDMFactory.INSTANCE;
 		rdmFactory = RDMFactory.INSTANCE;
 
