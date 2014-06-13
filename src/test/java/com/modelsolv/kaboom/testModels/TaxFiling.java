@@ -49,21 +49,13 @@ import javax.xml.datatype.XMLGregorianCalendar;
 @XmlType(name = "TaxFiling")
 public class TaxFiling {
 
-    @XmlAttribute(name = "filingID", required = true)
     protected String filingID;
     protected Person taxpayer;
-	@XmlAttribute(name = "jurisdiction", required = true)
     protected String jurisdiction;
-    @XmlAttribute(name = "year", required = true)
-    @XmlSchemaType(name = "gYear")
     protected XMLGregorianCalendar year;
-    @XmlAttribute(name = "period", required = true)
     protected int period;
-    @XmlAttribute(name = "currency", required = true)
     protected String currency;
-    @XmlAttribute(name = "grossIncome", required = true)
     protected BigDecimal grossIncome;
-    @XmlAttribute(name = "taxLiability", required = true)
     protected BigDecimal taxLiability;
 
     /**
